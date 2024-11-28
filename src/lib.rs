@@ -1,4 +1,7 @@
+mod sever;
+
 use clap::{Args, Parser, Subcommand};
+pub use sever::ServerManager;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -18,7 +21,7 @@ pub enum Commands {
 #[derive(Debug, Args)]
 pub struct RunArgs {
     #[arg(short, long)]
-    detach: bool,
+    pub detach: bool,
     #[arg(short, long, default_value_t = 5000)]
-    port: u16,
+    pub port: u16,
 }
