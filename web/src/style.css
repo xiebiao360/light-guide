@@ -1,7 +1,7 @@
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  line-height: 2;
+  font-weight: 600;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -59,16 +59,21 @@ button:focus-visible {
 }
 
 #app {
-  max-width: 1280px;
+  width: 60%;
+  min-width: 800px;
+  height: calc(100vh - 24rem);
+  min-height: 600px;
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
   text-align: center;
+  background-color: #ffffff;
+  border-radius: 12px;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: #ffbebe;
   }
   a:hover {
     color: #747bff;
