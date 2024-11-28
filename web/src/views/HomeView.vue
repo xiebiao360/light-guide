@@ -3,8 +3,8 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const navs = [
   { name: '概览', path: '/overview' },
+  { name: '资源管理', path: '/file-manager' },
   { name: '一键安装', path: '/install' },
-  { name: '文件管理', path: '/file-manager' },
 ]
 const goto = path => router.push(path)
 
@@ -62,6 +62,8 @@ const isActive = path => {
 .content {
   flex: 1;
   height: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
 }
 .active {
   background-color: #f0f0f0;

@@ -13,14 +13,14 @@ const routes = [
         component: () => import('@/views/overview/Index.vue'),
       },
       {
-        name: 'install',
-        path: '/install',
-        component: () => import('@/views/install/Index.vue'),
-      },
-      {
         name: 'file-manager',
         path: '/file-manager',
         component: () => import('@/views/file-manager/Index.vue'),
+      },
+      {
+        name: 'install',
+        path: '/install',
+        component: () => import('@/views/install/Index.vue'),
       },
     ],
   },
