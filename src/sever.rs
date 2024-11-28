@@ -19,10 +19,13 @@ impl ServerManager {
         let layer = Layer::new().with_filter(LevelFilter::INFO);
         tracing_subscriber::registry().with(layer).init();
 
+        let api = Router::new().route("/", get(|| async { "Hello, World!" }));
+
         let app = Router::new()
             .route("/", get(index_handler))
             .route("/index.html", get(index_handler))
             .route("/dist/*file", get(static_handler))
+            .nest("/api", api)
             .fallback_service(get(not_found));
 
         let addr = format!("0.0.0.0:{}", args.port);
