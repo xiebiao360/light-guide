@@ -3,13 +3,15 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const navs = [
   { name: '概览', path: '/overview' },
+  { name: '环境安装', path: '/enviroment' },
   { name: '资源管理', path: '/file-manager' },
+  { name: '版本管理', path: '/version' },
   { name: '一键安装', path: '/install' },
 ]
 const goto = path => router.push(path)
 
 const active = path => {
-  return router.currentRoute.value.path === path
+  return router.currentRoute.value.path.includes(path)
 }
 
 const isActive = path => {
@@ -45,6 +47,7 @@ const isActive = path => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  text-align: center;
 }
 .sider-item {
   padding: 10px 0px;

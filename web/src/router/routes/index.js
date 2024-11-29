@@ -13,9 +13,32 @@ const routes = [
         component: () => import('@/views/overview/Index.vue'),
       },
       {
+        name: 'enviroment',
+        path: '/enviroment',
+        component: () => import('@/views/enviroment/Index.vue'),
+        redirect: '/enviroment/docker',
+        children: [
+          {
+            name: 'docker',
+            path: 'docker',
+            component: () => import('@/views/enviroment/docker/Index.vue'),
+          },
+          {
+            name: 'kubernetes',
+            path: 'kubernetes',
+            component: () => import('@/views/enviroment/kubernetes/Index.vue'),
+          },
+        ],
+      },
+      {
         name: 'file-manager',
         path: '/file-manager',
         component: () => import('@/views/file-manager/Index.vue'),
+      },
+      {
+        name: 'version',
+        path: '/version',
+        component: () => import('@/views/version/Index.vue'),
       },
       {
         name: 'install',

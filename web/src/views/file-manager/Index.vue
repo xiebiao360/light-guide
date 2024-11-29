@@ -1,6 +1,6 @@
 <script setup></script>
 
 <template>
-  <h1>File Manager</h1>
+  <h2>资源管理</h2>
   <p>This is the file manager page.</p>
 </template>

@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { Button, message } from 'ant-design-vue'
+import { Button, Table, message } from 'ant-design-vue'
 
 import './style.css'
 import { router } from './router'

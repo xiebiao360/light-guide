@@ -1,22 +1,9 @@
 -- Add migration script here
 -- This script will be executed in sqlite database when the migration is run
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS packages (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  password TEXT NOT NULL,
-  role TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS products (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  price INTEGER NOT NULL,
-  stock INTEGER NOT NULL,
-  image TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  description TEXT NOT NULL,
+  created_at TEXT NOT NULL,
 );
