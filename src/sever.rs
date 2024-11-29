@@ -1,20 +1,69 @@
-use anyhow::Result;
-use axum::{
-    http::{header, StatusCode, Uri},
-    response::{Html, IntoResponse, Response},
-    routing::get,
-    Router,
-};
-use rust_embed::Embed;
+use core::fmt;
+use std::{fs, ops, path::Path, sync::Arc};
+
+use anyhow::{Ok, Result};
+use axum::{routing::get, Router};
+use sqlx::{migrate::MigrateDatabase, Sqlite, SqlitePool};
 use tokio::net::TcpListener;
 use tracing::{info, level_filters::LevelFilter};
 use tracing_subscriber::{fmt::Layer, layer::SubscriberExt, util::SubscriberInitExt, Layer as _};
 
-use crate::RunArgs;
+use crate::{index_handler, not_found, static_handler, RunArgs};
+
+#[derive(Debug, Clone)]
+struct AppState {
+    inner: Arc<AppStateInner>,
+}
+
+#[allow(unused)]
+struct AppStateInner {
+    pub(crate) pool: SqlitePool,
+}
+
+impl fmt::Debug for AppStateInner {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("AppStateInner").finish()
+    }
+}
+
+impl ops::Deref for AppState {
+    type Target = AppStateInner;
+
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
+}
+
+impl AppState {
+    pub async fn try_new(db: &str) -> Result<Self> {
+        let db_url = format!("sqlite://{}", db);
+
+        if let Some(parent) = Path::new(db).parent() {
+            if !parent.exists() {
+                fs::create_dir_all(parent)?;
+            }
+        }
+
+        if !Sqlite::database_exists(&db_url).await? {
+            info!("Creating database at {}", db_url);
+            Sqlite::create_database(&db_url).await?;
+            info!("Database created");
+        }
+        let pool = SqlitePool::connect(&db_url).await?;
+
+        sqlx::migrate!("./migrations").run(&pool).await?;
+
+        Ok(Self {
+            inner: Arc::new(AppStateInner { pool }),
+        })
+    }
+}
 
 pub async fn start_server(args: &RunArgs) -> Result<()> {
     let layer = Layer::new().with_filter(LevelFilter::INFO);
     tracing_subscriber::registry().with(layer).init();
+
+    let state = AppState::try_new(&args.db).await?;
 
     let api = Router::new().route("/", get(|| async { "Hello, World!" }));
 
@@ -23,7 +72,8 @@ pub async fn start_server(args: &RunArgs) -> Result<()> {
         .route("/index.html", get(index_handler))
         .route("/dist/*file", get(static_handler))
         .nest("/api", api)
-        .fallback_service(get(not_found));
+        .fallback_service(get(not_found))
+        .with_state(state);
 
     let addr = format!("0.0.0.0:{}", args.port);
     let listener = TcpListener::bind(&addr).await?;
@@ -36,45 +86,4 @@ pub async fn start_server(args: &RunArgs) -> Result<()> {
 
 pub async fn stop_server() -> Result<()> {
     Ok(())
-}
-
-async fn index_handler() -> impl IntoResponse {
-    static_handler("/index.html".parse::<Uri>().unwrap()).await
-}
-
-async fn static_handler(uri: Uri) -> impl IntoResponse {
-    let mut path = uri.path().trim_start_matches('/').to_string();
-
-    if path.starts_with("dist/") {
-        path = path.replace("dist/", "");
-    }
-
-    StaticFile(path)
-}
-
-async fn not_found() -> Html<&'static str> {
-    Html("<h1>404</h1><p>Not Found</p>")
-}
-
-#[derive(Embed)]
-#[folder = "web/dist"]
-struct Asset;
-
-pub struct StaticFile<T>(pub T);
-
-impl<T> IntoResponse for StaticFile<T>
-where
-    T: Into<String>,
-{
-    fn into_response(self) -> Response {
-        let path = self.0.into();
-
-        match Asset::get(path.as_str()) {
-            Some(content) => {
-                let mime = mime_guess::from_path(path).first_or_octet_stream();
-                ([(header::CONTENT_TYPE, mime.as_ref())], content.data).into_response()
-            }
-            None => (StatusCode::NOT_FOUND, "404 Not Found").into_response(),
-        }
-    }
 }
