@@ -1,7 +1,7 @@
 mod sever;
 
 use clap::{Args, Parser, Subcommand};
-pub use sever::ServerManager;
+pub use sever::{start_server, stop_server};
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]

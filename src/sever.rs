@@ -12,36 +12,30 @@ use tracing_subscriber::{fmt::Layer, layer::SubscriberExt, util::SubscriberInitE
 
 use crate::RunArgs;
 
-pub struct ServerManager;
+pub async fn start_server(args: &RunArgs) -> Result<()> {
+    let layer = Layer::new().with_filter(LevelFilter::INFO);
+    tracing_subscriber::registry().with(layer).init();
 
-impl ServerManager {
-    pub async fn run(args: &RunArgs) -> Result<()> {
-        let layer = Layer::new().with_filter(LevelFilter::INFO);
-        tracing_subscriber::registry().with(layer).init();
+    let api = Router::new().route("/", get(|| async { "Hello, World!" }));
 
-        let api = Router::new().route("/", get(|| async { "Hello, World!" }));
+    let app = Router::new()
+        .route("/", get(index_handler))
+        .route("/index.html", get(index_handler))
+        .route("/dist/*file", get(static_handler))
+        .nest("/api", api)
+        .fallback_service(get(not_found));
 
-        let app = Router::new()
-            .route("/", get(index_handler))
-            .route("/index.html", get(index_handler))
-            .route("/dist/*file", get(static_handler))
-            .nest("/api", api)
-            .fallback_service(get(not_found));
+    let addr = format!("0.0.0.0:{}", args.port);
+    let listener = TcpListener::bind(&addr).await?;
 
-        let addr = format!("0.0.0.0:{}", args.port);
-        let listener = TcpListener::bind(&addr).await?;
+    info!("Listening on {}", addr);
+    axum::serve(listener, app.into_make_service()).await?;
 
-        info!("Listening on {}", addr);
-        axum::serve(listener, app.into_make_service()).await?;
+    Ok(())
+}
 
-        Ok(())
-    }
-
-    pub async fn stop() -> Result<()> {
-        print!("Stopping the application");
-
-        Ok(())
-    }
+pub async fn stop_server() -> Result<()> {
+    Ok(())
 }
 
 async fn index_handler() -> impl IntoResponse {

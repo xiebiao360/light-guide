@@ -9,6 +9,12 @@ axum = "0.7.9"
 clap = { version = "4.5.21", features = ["derive"] }
 mime_guess = "2.0.5"
 rust-embed = "8.5.0"
+sqlx = { version = "0.8.2", features = [
+    "sqlite",
+    "runtime-tokio",
+    "tls-rustls",
+    "chrono",
+] }
 tokio = { version = "1.41.1", features = ["full"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }

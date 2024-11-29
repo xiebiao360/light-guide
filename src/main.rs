@@ -1,9 +1,8 @@
 use anyhow::Result;
 use clap::Parser;
 use light_guide::{
-    Cli,
+    start_server, stop_server, Cli,
     Commands::{Run, Stop},
-    ServerManager,
 };
 
 #[tokio::main]
@@ -13,11 +12,11 @@ async fn main() -> Result<()> {
     match &cli.cmd {
         Run(args) => {
             println!("Running with args: {:?}", args);
-            ServerManager::run(args).await?;
+            start_server(args).await?;
         }
         Stop => {
             println!("Stopping the application");
-            ServerManager::stop().await?;
+            stop_server().await?;
         }
     }
 
