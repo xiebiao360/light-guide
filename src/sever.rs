@@ -1,14 +1,16 @@
 use core::fmt;
-use std::{fs, ops, path::Path, sync::Arc};
+use std::{ops, path::Path, sync::Arc};
 
-use anyhow::{Ok, Result};
+use anyhow::{Context, Result};
 use axum::{routing::get, Router};
 use sqlx::{migrate::MigrateDatabase, Sqlite, SqlitePool};
-use tokio::net::TcpListener;
+use tokio::{fs, net::TcpListener};
 use tracing::{info, level_filters::LevelFilter};
 use tracing_subscriber::{fmt::Layer, layer::SubscriberExt, util::SubscriberInitExt, Layer as _};
 
-use crate::{index_handler, not_found, static_handler, RunArgs};
+use crate::{
+    docker_version_handler, error::AppError, index_handler, not_found, static_handler, RunArgs,
+};
 
 #[derive(Debug, Clone)]
 struct AppState {
@@ -35,12 +37,14 @@ impl ops::Deref for AppState {
 }
 
 impl AppState {
-    pub async fn try_new(db: &str) -> Result<Self> {
+    pub async fn try_new(db: &str) -> Result<Self, AppError> {
         let db_url = format!("sqlite://{}", db);
 
         if let Some(parent) = Path::new(db).parent() {
             if !parent.exists() {
-                fs::create_dir_all(parent)?;
+                fs::create_dir_all(parent)
+                    .await
+                    .context("Failed to create database directory")?;
             }
         }
 
@@ -65,7 +69,10 @@ pub async fn start_server(args: &RunArgs) -> Result<()> {
 
     let state = AppState::try_new(&args.db).await?;
 
-    let api = Router::new().route("/", get(|| async { "Hello, World!" }));
+    let docker = Router::new().route("/version", get(docker_version_handler));
+    let api = Router::new()
+        .route("/", get(|| async { "Hello, World!" }))
+        .nest("/docker", docker);
 
     let app = Router::new()
         .route("/", get(index_handler))
