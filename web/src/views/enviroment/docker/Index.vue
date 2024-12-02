@@ -1,12 +1,27 @@
 <script setup>
 import { ref } from 'vue'
-import { getVersion } from '@/api'
+import { getVersion, getPackages, installPackage } from '@/api'
 import { message } from 'ant-design-vue'
 import { UploadOutlined } from '@ant-design/icons-vue'
+import { format_timestamp } from '@/utils'
 
 getVersion().then(res => {
   version.value = res.data.version
 })
+
+const load_packages = () => {
+  getPackages().then(res => {
+    res.data.forEach(item => {
+      dataSource.push({
+        key: item.index,
+        name: item.name,
+        time: format_timestamp(item.create_time),
+      })
+    })
+  })
+}
+
+load_packages()
 
 const version = ref('')
 
@@ -32,11 +47,13 @@ const handleChange = info => {
   }
   if (info.file.status === 'done') {
     message.success(`${info.file.name} file uploaded successfully`)
+    spinning.value = false
+
+    load_packages()
   } else if (info.file.status === 'error') {
     message.error(`${info.file.name} file upload failed.`)
+    spinning.value = false
   }
-
-  spinning.value = false
 }
 
 const columns = [
@@ -55,18 +72,13 @@ const columns = [
     key: 'action',
   },
 ]
-const dataSource = [
-  {
-    key: '1',
-    name: 'docker-20.10.7.tgz',
-    time: '2021-07-01 12:00:00',
-  },
-  {
-    key: '2',
-    name: 'docker-20.10.6.tgz',
-    time: '2021-06-01 12:00:00',
-  },
-]
+const dataSource = []
+
+const install_package = name => {
+  installPackage(name).then(res => {
+    message.success('安装成功')
+  })
+}
 </script>
 <template>
   <a-space direction="vertical" style="width: 100%">
@@ -93,7 +105,7 @@ const dataSource = [
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
               <a-space>
-                <a-button type="primary">安装</a-button>
+                <a-button type="primary" @click="install_package(record.name)">安装</a-button>
                 <a-button type="primary">删除</a-button>
               </a-space>
             </template>

@@ -13,7 +13,8 @@ use tracing::{info, level_filters::LevelFilter};
 use tracing_subscriber::{fmt::Layer, layer::SubscriberExt, util::SubscriberInitExt, Layer as _};
 
 use crate::{
-    docker_upload_handler, docker_version_handler, error::AppError, index_handler, not_found, static_handler, AppSettings, RunArgs
+    docker_install_handler, docker_packages_handler, docker_upload_handler, docker_version_handler,
+    error::AppError, index_handler, not_found, static_handler, AppSettings, RunArgs,
 };
 
 #[derive(Debug, Clone)]
@@ -80,7 +81,9 @@ pub async fn start_server(args: &RunArgs) -> Result<()> {
         .route(
             "/upload",
             post(docker_upload_handler).layer(DefaultBodyLimit::max(1024 * 1024 * 100)),
-        );
+        )
+        .route("/packages", get(docker_packages_handler))
+        .route("/install/:package_name", post(docker_install_handler));
     let api = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .nest("/docker", docker);
