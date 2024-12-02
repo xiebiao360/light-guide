@@ -1,10 +1,11 @@
-mod handlers;
-mod sever;
-mod models;
 mod error;
+mod handlers;
+mod models;
+mod sever;
 
 use clap::{Args, Parser, Subcommand};
 pub use handlers::*;
+pub use models::*;
 pub use sever::{start_server, stop_server};
 
 #[derive(Parser)]

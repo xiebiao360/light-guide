@@ -12,6 +12,8 @@ const version = ref('')
 
 const fileList = ref([])
 
+const spinning = ref(false)
+
 const beforeUpload = file => {
   // const isPng = file.type === 'image/png'
   // if (!isPng) {
@@ -26,12 +28,15 @@ const beforeUpload = file => {
 const handleChange = info => {
   if (info.file.status !== 'uploading') {
     console.log(info.file, info.fileList)
+    spinning.value = true
   }
   if (info.file.status === 'done') {
     message.success(`${info.file.name} file uploaded successfully`)
   } else if (info.file.status === 'error') {
     message.error(`${info.file.name} file upload failed.`)
   }
+
+  spinning.value = false
 }
 
 const columns = [
@@ -73,26 +78,28 @@ const dataSource = [
         <a-alert message="Docker 未安装" description="点击操作按钮立即安装" type="error" closable />
       </template>
     </div>
-    <template v-if="version == ''">
-      <a-space>
-        <a-upload v-model:file-list="fileList" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :before-upload="beforeUpload" @change="handleChange">
-          <a-button type="primary">
-            <upload-outlined></upload-outlined>
-            导入安装包
-          </a-button>
-        </a-upload>
-        <a-button type="primary">下载安装包</a-button>
-      </a-space>
-      <a-table :dataSource="dataSource" :columns="columns">
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'action'">
-            <a-space>
-              <a-button type="primary">安装</a-button>
-              <a-button type="primary">删除</a-button>
-            </a-space>
+    <template v-if="version != ''">
+      <a-spin :spinning="spinning">
+        <a-space>
+          <a-upload v-model:file-list="fileList" action="/api/docker/upload" :showUploadList="false" :before-upload="beforeUpload" @change="handleChange">
+            <a-button type="primary">
+              <upload-outlined></upload-outlined>
+              导入安装包
+            </a-button>
+          </a-upload>
+          <a-button type="primary">下载安装包</a-button>
+        </a-space>
+        <a-table :dataSource="dataSource" :columns="columns">
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'action'">
+              <a-space>
+                <a-button type="primary">安装</a-button>
+                <a-button type="primary">删除</a-button>
+              </a-space>
+            </template>
           </template>
-        </template>
-      </a-table>
+        </a-table>
+      </a-spin>
     </template>
   </a-space>
 </template>

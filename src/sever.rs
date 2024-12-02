@@ -2,23 +2,27 @@ use core::fmt;
 use std::{ops, path::Path, sync::Arc};
 
 use anyhow::{Context, Result};
-use axum::{routing::get, Router};
+use axum::{
+    extract::DefaultBodyLimit,
+    routing::{get, post},
+    Router,
+};
 use sqlx::{migrate::MigrateDatabase, Sqlite, SqlitePool};
 use tokio::{fs, net::TcpListener};
 use tracing::{info, level_filters::LevelFilter};
 use tracing_subscriber::{fmt::Layer, layer::SubscriberExt, util::SubscriberInitExt, Layer as _};
 
 use crate::{
-    docker_version_handler, error::AppError, index_handler, not_found, static_handler, RunArgs,
+    docker_upload_handler, docker_version_handler, error::AppError, index_handler, not_found, static_handler, AppSettings, RunArgs
 };
 
 #[derive(Debug, Clone)]
-struct AppState {
+pub struct AppState {
     inner: Arc<AppStateInner>,
 }
 
 #[allow(unused)]
-struct AppStateInner {
+pub struct AppStateInner {
     pub(crate) pool: SqlitePool,
 }
 
@@ -69,7 +73,14 @@ pub async fn start_server(args: &RunArgs) -> Result<()> {
 
     let state = AppState::try_new(&args.db).await?;
 
-    let docker = Router::new().route("/version", get(docker_version_handler));
+    AppSettings::try_load_from_db(&state).await?;
+
+    let docker = Router::new()
+        .route("/version", get(docker_version_handler))
+        .route(
+            "/upload",
+            post(docker_upload_handler).layer(DefaultBodyLimit::max(1024 * 1024 * 100)),
+        );
     let api = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .nest("/docker", docker);

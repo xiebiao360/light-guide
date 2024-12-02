@@ -1133,6 +1133,7 @@ dependencies = [
  "bollard",
  "clap",
  "mime_guess",
+ "once_cell",
  "rust-embed",
  "serde",
  "sqlx",
