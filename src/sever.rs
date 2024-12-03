@@ -7,15 +7,17 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use dashmap::DashMap;
 use sqlx::{migrate::MigrateDatabase, Sqlite, SqlitePool};
-use tokio::{fs, net::TcpListener};
+use tokio::{fs, net::TcpListener, sync::broadcast};
 use tracing::{info, level_filters::LevelFilter};
 use tracing_subscriber::{fmt::Layer, layer::SubscriberExt, util::SubscriberInitExt, Layer as _};
 
 use crate::{
-    docker_install_handler, docker_packages_handler, docker_upload_handler, docker_version_handler,
-    error::AppError, index_handler, not_found, static_handler, AppSettings, RunArgs,
+    docker_install_handler, docker_packages_handler, docker_upload_handler, docker_version_handler, error::AppError, index_handler, not_found, sse_handler, static_handler, AppEvent, AppSettings, RunArgs
 };
+
+pub type AgentMap = Arc<DashMap<String, broadcast::Sender<Arc<AppEvent>>>>;
 
 #[derive(Debug, Clone)]
 pub struct AppState {
@@ -25,6 +27,7 @@ pub struct AppState {
 #[allow(unused)]
 pub struct AppStateInner {
     pub(crate) pool: SqlitePool,
+    pub(crate) agents: AgentMap,
 }
 
 impl fmt::Debug for AppStateInner {
@@ -62,8 +65,10 @@ impl AppState {
 
         sqlx::migrate!("./migrations").run(&pool).await?;
 
+        let agents = Arc::new(DashMap::new());
+
         Ok(Self {
-            inner: Arc::new(AppStateInner { pool }),
+            inner: Arc::new(AppStateInner { pool, agents }),
         })
     }
 }
@@ -89,6 +94,7 @@ pub async fn start_server(args: &RunArgs) -> Result<()> {
         .nest("/docker", docker);
 
     let app = Router::new()
+        .route("/events", get(sse_handler))
         .route("/", get(index_handler))
         .route("/index.html", get(index_handler))
         .route("/dist/*file", get(static_handler))
