@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { getVersion, getPackages, installPackage } from '@/api'
+import { getVersion, getPackages, installPackage, removePackage } from '@/api'
 import { message } from 'ant-design-vue'
 import { UploadOutlined } from '@ant-design/icons-vue'
 import { format_timestamp } from '@/utils'
@@ -11,8 +11,9 @@ getVersion().then(res => {
 
 const load_packages = () => {
   getPackages().then(res => {
+    dataSource.value.length = 0
     res.data.forEach(item => {
-      dataSource.push({
+      dataSource.value.push({
         key: item.index,
         name: item.name,
         time: format_timestamp(item.create_time),
@@ -49,7 +50,9 @@ const handleChange = info => {
     message.success(`${info.file.name} file uploaded successfully`)
     spinning.value = false
 
-    load_packages()
+    setTimeout(() => {
+      load_packages()
+    }, 1000)
   } else if (info.file.status === 'error') {
     message.error(`${info.file.name} file upload failed.`)
     spinning.value = false
@@ -72,11 +75,20 @@ const columns = [
     key: 'action',
   },
 ]
-const dataSource = []
+const dataSource = ref([])
 
 const install_package = name => {
   installPackage(name).then(res => {
     message.success('安装成功')
+  })
+}
+
+const remove_package = name => {
+  removePackage(name).then(res => {
+    message.success('删除成功')
+    setTimeout(() => {
+      load_packages()
+    }, 1000)
   })
 }
 </script>
@@ -100,13 +112,14 @@ const install_package = name => {
             </a-button>
           </a-upload>
           <a-button type="primary">下载安装包</a-button>
+          <a-button @click="load_packages">刷新</a-button>
         </a-space>
         <a-table :dataSource="dataSource" :columns="columns">
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
               <a-space>
                 <a-button type="primary" @click="install_package(record.name)">安装</a-button>
-                <a-button type="primary">删除</a-button>
+                <a-button type="primary" @click="remove_package(record.name)">删除</a-button>
               </a-space>
             </template>
           </template>

@@ -95,10 +95,31 @@ pub async fn docker_install_handler(
 
     // check if the file exists
     if !fs::metadata(&file_path).await?.is_file() {
-        return Err(AppError::NotFound("docker package file not found".to_string()));
+        return Err(AppError::NotFound(
+            "docker package file not found".to_string(),
+        ));
     }
 
     info!("installing docker package: {}", package_name);
+
+    Ok(())
+}
+
+pub async fn docker_remove_handler(
+    Path(package_name): Path<String>,
+) -> Result<impl IntoResponse, AppError> {
+    let base_folder = get_settings().base_folder.clone();
+    let docker_pkgs_folder = format!("{}/docker_pkgs", base_folder);
+    let file_path = format!("{}/{}", docker_pkgs_folder, package_name);
+
+    // check if the file exists
+    if !fs::metadata(&file_path).await?.is_file() {
+        return Err(AppError::NotFound(
+            "docker package file not found".to_string(),
+        ));
+    }
+
+    fs::remove_file(file_path).await?;
 
     Ok(())
 }
