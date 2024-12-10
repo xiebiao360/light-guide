@@ -2,6 +2,7 @@ mod error;
 pub mod file_server;
 mod handlers;
 mod models;
+pub mod registry;
 pub mod web_server;
 
 use std::{fs::File, io::Read, process::Command};
@@ -25,6 +26,8 @@ pub enum Commands {
     Stop,
     /// Serve a directory
     Fs(FsArgs),
+    /// Deploy a registry
+    Registry(RegistryArgs),
 }
 
 #[derive(Debug, Args)]
@@ -33,7 +36,7 @@ pub struct RunArgs {
     #[arg(short, long)]
     pub detach: bool,
     /// Port to listen on
-    #[arg(short, long, default_value_t = 5000)]
+    #[arg(short, long, default_value_t = 3000)]
     pub port: u16,
     /// Path to the database file
     #[arg(long, default_value = "guide.db")]
@@ -66,6 +69,19 @@ pub struct FsRunArgs {
     /// Path to the directory to serve
     #[arg(long, default_value = ".")]
     pub path: String,
+}
+
+#[derive(Debug, Args)]
+pub struct RegistryArgs {
+    /// Port to listen on
+    #[arg(short, long, default_value_t = 5000)]
+    pub port: u16,
+    /// Image to use
+    #[arg(long, default_value = "registry:2")]
+    pub image: String,
+    /// Image file to use. e.g. registry:2.tar
+    #[arg(long)]
+    pub image_file: Option<String>,
 }
 
 pub fn is_daemon_running(pid_file: &str) -> bool {

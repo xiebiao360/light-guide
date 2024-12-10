@@ -24,6 +24,10 @@ fn main() -> Result<()> {
                 file_server::stop_server()?
             }
         },
+        Registry(args) => {
+            println!("Running registry with args: {:?}", args);
+            todo!()
+        }
     }
 
     Ok(())

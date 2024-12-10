@@ -1,7 +1,13 @@
 use std::{ops, process::Command};
 
 use anyhow::{anyhow, Result};
-use bollard::{errors::Error, Docker};
+use bollard::{
+    errors::Error,
+    image::{ImportImageOptions, ListImagesOptions},
+    Docker,
+};
+use tokio_stream::StreamExt;
+use tokio_util::codec::{BytesCodec, FramedRead};
 
 pub struct DockerClient(Docker);
 
@@ -37,6 +43,38 @@ impl DockerClient {
                 _ => Err(anyhow!("Failed to connect to Docker: {}", e.to_string())),
             },
         }
+    }
+    pub async fn get_images(&self) -> Result<()> {
+        let options = Some(ListImagesOptions::<String> {
+            all: true,
+            ..Default::default()
+        });
+        let images = self.list_images(options).await?;
+        for image in images {
+            println!("{:?}", image.repo_tags);
+        }
+        Ok(())
+    }
+    pub async fn load_image_file(&self, image_file: &str) -> Result<()> {
+        let file = tokio::fs::File::open(image_file).await?;
+        let mut byte_stream = FramedRead::new(file, BytesCodec::new()).map(|r| {
+            let bytes = r.unwrap().freeze();
+            Ok::<_, Error>(bytes)
+        });
+        let bytes = byte_stream.next().await.unwrap().unwrap();
+        let mut stream = self.import_image(
+            ImportImageOptions {
+                ..Default::default()
+            },
+            bytes,
+            None,
+        );
+        while let Some(item) = stream.try_next().await? {
+            if let Some(progress) = item.progress_detail {
+                println!("{:?}", progress);
+            }
+        }
+        Ok(())
     }
 }
 
