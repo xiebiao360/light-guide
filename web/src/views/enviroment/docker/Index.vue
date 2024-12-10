@@ -1,16 +1,34 @@
 <script setup>
 import { ref } from 'vue'
-import { getVersion } from '@/api'
+import { getVersion, getPackages, installPackage, removePackage } from '@/api'
 import { message } from 'ant-design-vue'
 import { UploadOutlined } from '@ant-design/icons-vue'
+import { format_timestamp } from '@/utils'
 
 getVersion().then(res => {
   version.value = res.data.version
 })
 
+const load_packages = () => {
+  getPackages().then(res => {
+    dataSource.value.length = 0
+    res.data.forEach(item => {
+      dataSource.value.push({
+        key: item.index,
+        name: item.name,
+        time: format_timestamp(item.create_time),
+      })
+    })
+  })
+}
+
+load_packages()
+
 const version = ref('')
 
 const fileList = ref([])
+
+const spinning = ref(false)
 
 const beforeUpload = file => {
   // const isPng = file.type === 'image/png'
@@ -26,11 +44,18 @@ const beforeUpload = file => {
 const handleChange = info => {
   if (info.file.status !== 'uploading') {
     console.log(info.file, info.fileList)
+    spinning.value = true
   }
   if (info.file.status === 'done') {
     message.success(`${info.file.name} file uploaded successfully`)
+    spinning.value = false
+
+    setTimeout(() => {
+      load_packages()
+    }, 1000)
   } else if (info.file.status === 'error') {
     message.error(`${info.file.name} file upload failed.`)
+    spinning.value = false
   }
 }
 
@@ -50,18 +75,22 @@ const columns = [
     key: 'action',
   },
 ]
-const dataSource = [
-  {
-    key: '1',
-    name: 'docker-20.10.7.tgz',
-    time: '2021-07-01 12:00:00',
-  },
-  {
-    key: '2',
-    name: 'docker-20.10.6.tgz',
-    time: '2021-06-01 12:00:00',
-  },
-]
+const dataSource = ref([])
+
+const install_package = name => {
+  installPackage(name).then(res => {
+    message.success('安装成功')
+  })
+}
+
+const remove_package = name => {
+  removePackage(name).then(res => {
+    message.success('删除成功')
+    setTimeout(() => {
+      load_packages()
+    }, 1000)
+  })
+}
 </script>
 <template>
   <a-space direction="vertical" style="width: 100%">
@@ -73,26 +102,29 @@ const dataSource = [
         <a-alert message="Docker 未安装" description="点击操作按钮立即安装" type="error" closable />
       </template>
     </div>
-    <template v-if="version == ''">
-      <a-space>
-        <a-upload v-model:file-list="fileList" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :before-upload="beforeUpload" @change="handleChange">
-          <a-button type="primary">
-            <upload-outlined></upload-outlined>
-            导入安装包
-          </a-button>
-        </a-upload>
-        <a-button type="primary">下载安装包</a-button>
-      </a-space>
-      <a-table :dataSource="dataSource" :columns="columns">
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'action'">
-            <a-space>
-              <a-button type="primary">安装</a-button>
-              <a-button type="primary">删除</a-button>
-            </a-space>
+    <template v-if="version != ''">
+      <a-spin :spinning="spinning">
+        <a-space>
+          <a-upload v-model:file-list="fileList" action="/api/docker/upload" :showUploadList="false" :before-upload="beforeUpload" @change="handleChange">
+            <a-button type="primary">
+              <upload-outlined></upload-outlined>
+              导入安装包
+            </a-button>
+          </a-upload>
+          <a-button type="primary">下载安装包</a-button>
+          <a-button @click="load_packages">刷新</a-button>
+        </a-space>
+        <a-table :dataSource="dataSource" :columns="columns">
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'action'">
+              <a-space>
+                <a-button type="primary" @click="install_package(record.name)">安装</a-button>
+                <a-button type="primary" @click="remove_package(record.name)">删除</a-button>
+              </a-space>
+            </template>
           </template>
-        </template>
-      </a-table>
+        </a-table>
+      </a-spin>
     </template>
   </a-space>
 </template>

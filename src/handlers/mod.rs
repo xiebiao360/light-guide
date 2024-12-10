@@ -1,4 +1,5 @@
 mod docker;
+mod sse;
 mod static_file;
 
 use axum::{
@@ -6,8 +7,9 @@ use axum::{
     response::{Html, IntoResponse},
 };
 
-pub use static_file::static_handler;
 pub use docker::*;
+pub use static_file::static_handler;
+pub use sse::sse_handler;
 
 pub async fn index_handler() -> impl IntoResponse {
     static_handler("/index.html".parse::<Uri>().unwrap()).await

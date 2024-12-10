@@ -1,4 +1,5 @@
 use axum::{
+    extract::multipart,
     http::StatusCode,
     response::{IntoResponse, Response},
     Json,
@@ -27,6 +28,12 @@ pub enum AppError {
 
     #[error("migrate error: {0}")]
     MigrateError(#[from] sqlx::migrate::MigrateError),
+
+    #[error("multipart error: {0}")]
+    MultipartError(#[from] multipart::MultipartError),
+
+    #[error("io error: {0}")]
+    IOError(#[from] std::io::Error),
 }
 
 impl ErrorOutput {
@@ -45,6 +52,8 @@ impl IntoResponse for AppError {
             AppError::DockerError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::AnyError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::MigrateError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::MultipartError(_) => StatusCode::BAD_REQUEST,
+            AppError::IOError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
         (status, Json(ErrorOutput::new(self.to_string()))).into_response()

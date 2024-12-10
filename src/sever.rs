@@ -2,25 +2,39 @@ use core::fmt;
 use std::{fs::File, io::Read, ops, path::Path, sync::Arc};
 
 use anyhow::{Context, Result};
+<<<<<<< HEAD
 use axum::{routing::get, Router};
 use daemonize::Daemonize;
+=======
+use axum::{
+    extract::DefaultBodyLimit,
+    routing::{get, post},
+    Router,
+};
+use dashmap::DashMap;
+>>>>>>> ad81c98ad93fa51472ff2a37f30ac45328963f50
 use sqlx::{migrate::MigrateDatabase, Sqlite, SqlitePool};
-use tokio::{fs, net::TcpListener};
+use tokio::{fs, net::TcpListener, sync::broadcast};
 use tracing::{info, level_filters::LevelFilter};
 use tracing_subscriber::{fmt::Layer, layer::SubscriberExt, util::SubscriberInitExt, Layer as _};
 
 use crate::{
-    docker_version_handler, error::AppError, index_handler, not_found, static_handler, RunArgs,
+    docker_install_handler, docker_packages_handler, docker_remove_handler, docker_upload_handler,
+    docker_version_handler, error::AppError, index_handler, not_found, sse_handler, static_handler,
+    AppEvent, AppSettings, RunArgs,
 };
 
+pub type AgentMap = Arc<DashMap<String, broadcast::Sender<Arc<AppEvent>>>>;
+
 #[derive(Debug, Clone)]
-struct AppState {
+pub struct AppState {
     inner: Arc<AppStateInner>,
 }
 
 #[allow(unused)]
-struct AppStateInner {
+pub struct AppStateInner {
     pub(crate) pool: SqlitePool,
+    pub(crate) agents: AgentMap,
 }
 
 impl fmt::Debug for AppStateInner {
@@ -58,8 +72,10 @@ impl AppState {
 
         sqlx::migrate!("./migrations").run(&pool).await?;
 
+        let agents = Arc::new(DashMap::new());
+
         Ok(Self {
-            inner: Arc::new(AppStateInner { pool }),
+            inner: Arc::new(AppStateInner { pool, agents }),
         })
     }
 }
@@ -97,12 +113,23 @@ pub async fn start_server(args: &RunArgs) -> Result<()> {
 
     let state = AppState::try_new(&args.db).await?;
 
-    let docker = Router::new().route("/version", get(docker_version_handler));
+    AppSettings::try_load_from_db(&state).await?;
+
+    let docker = Router::new()
+        .route("/version", get(docker_version_handler))
+        .route(
+            "/upload",
+            post(docker_upload_handler).layer(DefaultBodyLimit::max(1024 * 1024 * 100)),
+        )
+        .route("/packages", get(docker_packages_handler))
+        .route("/install/:package_name", post(docker_install_handler))
+        .route("/remove/:package_name", post(docker_remove_handler));
     let api = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .nest("/docker", docker);
 
     let app = Router::new()
+        .route("/events", get(sse_handler))
         .route("/", get(index_handler))
         .route("/index.html", get(index_handler))
         .route("/dist/*file", get(static_handler))
