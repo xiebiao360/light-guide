@@ -4,6 +4,8 @@ mod handlers;
 mod models;
 pub mod web_server;
 
+use std::{fs::File, io::Read, process::Command};
+
 use clap::{Args, Parser, Subcommand};
 pub use handlers::*;
 pub use models::*;
@@ -64,4 +66,21 @@ pub struct FsRunArgs {
     /// Path to the directory to serve
     #[arg(long, default_value = ".")]
     pub path: String,
+}
+
+pub fn is_daemon_running(pid_file: &str) -> bool {
+    if let Ok(mut file) = File::open(pid_file) {
+        let mut pid = String::new();
+        if file.read_to_string(&mut pid).is_ok() {
+            if let Ok(pid) = pid.trim().parse::<i32>() {
+                return Command::new("kill")
+                    .arg("-0")
+                    .arg(pid.to_string())
+                    .status()
+                    .map(|status| status.success())
+                    .unwrap_or(false);
+            }
+        }
+    }
+    false
 }

@@ -16,8 +16,8 @@ use tracing_subscriber::{fmt::Layer, layer::SubscriberExt, util::SubscriberInitE
 
 use crate::{
     docker_install_handler, docker_packages_handler, docker_remove_handler, docker_upload_handler,
-    docker_version_handler, error::AppError, index_handler, not_found, sse_handler, static_handler,
-    AppEvent, AppSettings, RunArgs,
+    docker_version_handler, error::AppError, index_handler, is_daemon_running, not_found,
+    sse_handler, static_handler, AppEvent, AppSettings, RunArgs,
 };
 
 pub type AgentMap = Arc<DashMap<String, broadcast::Sender<Arc<AppEvent>>>>;
@@ -80,6 +80,10 @@ const PID_FILE: &str = "/tmp/guide-web.pid";
 
 pub fn run_server(args: &RunArgs) -> Result<()> {
     if args.detach {
+        // 判断守护进程是否已经运行
+        if is_daemon_running(PID_FILE) {
+            return Err(anyhow::anyhow!("The daemon is already running"));
+        }
         // 配置守护进程
         let stdout = File::create("/tmp/guide-web.out").unwrap();
         let stderr = File::create("/tmp/guide-web.err").unwrap();

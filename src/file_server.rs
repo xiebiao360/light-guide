@@ -1,6 +1,6 @@
 use std::{fs::File, io::Read};
 
-use crate::FsRunArgs;
+use crate::{is_daemon_running, FsRunArgs};
 use anyhow::Result;
 use axum::Router;
 use daemonize::Daemonize;
@@ -11,6 +11,10 @@ const PID_FILE: &str = "/tmp/guide-fs.pid";
 
 pub fn run_server(args: &FsRunArgs) -> Result<()> {
     if args.detach {
+        // 判断守护进程是否已经运行
+        if is_daemon_running(PID_FILE) {
+            return Err(anyhow::anyhow!("The daemon is already running"));
+        }
         // 配置守护进程
         let stdout = File::create("/tmp/guide-fs.out").unwrap();
         let stderr = File::create("/tmp/guide-fs.err").unwrap();
