@@ -10,7 +10,7 @@ use tokio::sync::broadcast;
 use tokio_stream::{wrappers::BroadcastStream, StreamExt};
 use tracing::{debug, info};
 
-use crate::{sever::AppState, AppEvent};
+use crate::{web_server::AppState, AppEvent};
 
 pub async fn sse_handler(
     TypedHeader(user_agent): TypedHeader<headers::UserAgent>,

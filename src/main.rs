@@ -1,9 +1,6 @@
 use anyhow::Result;
 use clap::Parser;
-use light_guide::{
-    run_server, stop_server, Cli,
-    Commands::{Run, Stop},
-};
+use light_guide::{web_server, Cli, Commands::*};
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -11,11 +8,15 @@ fn main() -> Result<()> {
     match &cli.cmd {
         Run(args) => {
             println!("Running with args: {:?}", args);
-            run_server(args)?
+            web_server::run_server(args)?
         }
         Stop => {
             println!("Stopping the application");
-            stop_server()?
+            web_server::stop_server()?
+        }
+        Fs(args) => {
+            println!("Serving directory with args: {:?}", args);
+            todo!()
         }
     }
 

@@ -2,7 +2,7 @@ use std::sync::{Mutex, MutexGuard};
 
 use once_cell::sync::Lazy;
 
-use crate::{error::AppError, sever::AppState};
+use crate::{error::AppError, web_server::AppState};
 
 pub struct AppSettings {
     pub base_folder: String,
