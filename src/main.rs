@@ -1,6 +1,6 @@
 use anyhow::Result;
 use clap::Parser;
-use light_guide::{web_server, Cli, Commands::*};
+use light_guide::{file_server, web_server, Cli, Commands::*, FsCommands};
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -14,10 +14,16 @@ fn main() -> Result<()> {
             println!("Stopping the application");
             web_server::stop_server()?
         }
-        Fs(args) => {
-            println!("Serving directory with args: {:?}", args);
-            todo!()
-        }
+        Fs(args) => match &args.cmd {
+            FsCommands::Run(args) => {
+                println!("Running file server with args: {:?}", args);
+                file_server::run_server(args)?
+            }
+            FsCommands::Stop => {
+                println!("Stopping the file server");
+                file_server::stop_server()?
+            }
+        },
     }
 
     Ok(())

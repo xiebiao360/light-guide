@@ -1,5 +1,5 @@
 mod error;
-mod file_server;
+pub mod file_server;
 mod handlers;
 mod models;
 pub mod web_server;
@@ -38,8 +38,23 @@ pub struct RunArgs {
     pub db: String,
 }
 
-#[derive(Debug, Args)]
+#[derive(Parser)]
+#[command(version, about, long_about = None)]
 pub struct FsArgs {
+    #[command(subcommand)]
+    pub cmd: FsCommands,
+}
+
+#[derive(Subcommand)]
+pub enum FsCommands {
+    /// Run the file server
+    Run(FsRunArgs),
+    /// Stop the file server
+    Stop,
+}
+
+#[derive(Debug, Args)]
+pub struct FsRunArgs {
     /// Detach the process
     #[arg(short, long)]
     pub detach: bool,

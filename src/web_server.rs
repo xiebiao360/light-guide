@@ -103,7 +103,7 @@ pub fn run_server(args: &RunArgs) -> Result<()> {
 }
 
 #[tokio::main]
-pub async fn start_server(args: &RunArgs) -> Result<()> {
+async fn start_server(args: &RunArgs) -> Result<()> {
     let layer = Layer::new().with_filter(LevelFilter::INFO);
     tracing_subscriber::registry().with(layer).init();
 
