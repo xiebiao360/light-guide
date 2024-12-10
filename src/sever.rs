@@ -1,8 +1,9 @@
 use core::fmt;
-use std::{ops, path::Path, sync::Arc};
+use std::{fs::File, io::Read, ops, path::Path, sync::Arc};
 
 use anyhow::{Context, Result};
 use axum::{routing::get, Router};
+use daemonize::Daemonize;
 use sqlx::{migrate::MigrateDatabase, Sqlite, SqlitePool};
 use tokio::{fs, net::TcpListener};
 use tracing::{info, level_filters::LevelFilter};
@@ -63,6 +64,33 @@ impl AppState {
     }
 }
 
+const PID_FILE: &str = "/tmp/guide-web.pid";
+
+pub fn run_server(args: &RunArgs) -> Result<()> {
+    if args.detach {
+        // 配置守护进程
+        let stdout = File::create("/tmp/guide-web.out").unwrap();
+        let stderr = File::create("/tmp/guide-web.err").unwrap();
+        let daemonize = Daemonize::new()
+            .pid_file(PID_FILE) // PID 文件
+            .chown_pid_file(true) // 是否修改 PID 文件的所有者
+            .working_directory("/tmp")
+            .stdout(stdout) // 标准输出重定向
+            .stderr(stderr); // 标准错误重定向
+
+        match daemonize.start() {
+            Ok(_) => {
+                info!("Start light-guide-web successfully!");
+                start_server(&args)
+            }
+            Err(e) => return Err(e.into()),
+        }
+    } else {
+        start_server(&args)
+    }
+}
+
+#[tokio::main]
 pub async fn start_server(args: &RunArgs) -> Result<()> {
     let layer = Layer::new().with_filter(LevelFilter::INFO);
     tracing_subscriber::registry().with(layer).init();
@@ -91,6 +119,26 @@ pub async fn start_server(args: &RunArgs) -> Result<()> {
     Ok(())
 }
 
-pub async fn stop_server() -> Result<()> {
+pub fn stop_server() -> Result<()> {
+    if let Ok(mut file) = File::open(PID_FILE) {
+        let mut pid = String::new();
+        if file.read_to_string(&mut pid).is_ok() {
+            if let Ok(pid) = pid.trim().parse::<i32>() {
+                // stop pid process use Command
+                let output = std::process::Command::new("kill")
+                    .arg("-TERM")
+                    .arg(format!("{}", pid))
+                    .output()?;
+                if output.status.success() {
+                    info!("Stop light-guide-web successfully!");
+                } else {
+                    return Err(anyhow::anyhow!(
+                        "Failed to stop light-guide-web. Error: {}",
+                        String::from_utf8_lossy(&output.stderr)
+                    ));
+                }
+            }
+        }
+    }
     Ok(())
 }

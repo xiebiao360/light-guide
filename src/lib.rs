@@ -5,7 +5,7 @@ mod error;
 
 use clap::{Args, Parser, Subcommand};
 pub use handlers::*;
-pub use sever::{start_server, stop_server};
+pub use sever::{run_server, stop_server};
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
