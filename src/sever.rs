@@ -2,17 +2,13 @@ use core::fmt;
 use std::{fs::File, io::Read, ops, path::Path, sync::Arc};
 
 use anyhow::{Context, Result};
-<<<<<<< HEAD
-use axum::{routing::get, Router};
-use daemonize::Daemonize;
-=======
 use axum::{
     extract::DefaultBodyLimit,
     routing::{get, post},
     Router,
 };
+use daemonize::Daemonize;
 use dashmap::DashMap;
->>>>>>> ad81c98ad93fa51472ff2a37f30ac45328963f50
 use sqlx::{migrate::MigrateDatabase, Sqlite, SqlitePool};
 use tokio::{fs, net::TcpListener, sync::broadcast};
 use tracing::{info, level_filters::LevelFilter};

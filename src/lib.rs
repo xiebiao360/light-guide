@@ -5,12 +5,8 @@ mod sever;
 
 use clap::{Args, Parser, Subcommand};
 pub use handlers::*;
-<<<<<<< HEAD
-pub use sever::{run_server, stop_server};
-=======
 pub use models::*;
-pub use sever::{start_server, stop_server};
->>>>>>> ad81c98ad93fa51472ff2a37f30ac45328963f50
+pub use sever::{run_server, stop_server};
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
