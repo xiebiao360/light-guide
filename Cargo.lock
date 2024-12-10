@@ -1226,6 +1226,7 @@ dependencies = [
  "axum",
  "axum-extra",
  "bollard",
+ "bollard-stubs",
  "clap",
  "daemonize",
  "dashmap",

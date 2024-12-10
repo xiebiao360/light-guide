@@ -73,6 +73,9 @@ pub struct FsRunArgs {
 
 #[derive(Debug, Args)]
 pub struct RegistryArgs {
+    /// Name of the registry
+    #[arg(short, long, default_value = "light-registry")]
+    pub name: String,
     /// Port to listen on
     #[arg(short, long, default_value_t = 5000)]
     pub port: u16,

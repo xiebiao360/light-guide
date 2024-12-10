@@ -1,6 +1,6 @@
 use anyhow::Result;
 use clap::Parser;
-use light_guide::{file_server, web_server, Cli, Commands::*, FsCommands};
+use light_guide::{file_server, registry, web_server, Cli, Commands::*, FsCommands};
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -26,7 +26,7 @@ fn main() -> Result<()> {
         },
         Registry(args) => {
             println!("Running registry with args: {:?}", args);
-            todo!()
+            registry::run_container(args)?
         }
     }
 
