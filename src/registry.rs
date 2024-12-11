@@ -7,7 +7,7 @@ use bollard::{
 };
 use bollard_stubs::models::HostConfig;
 
-use crate::{DockerClient, RegistryArgs};
+use crate::{DockerClient, RegistryInitArgs};
 
 pub struct Registry(DockerClient);
 
@@ -37,7 +37,7 @@ impl Registry {
         Ok(image.is_some())
     }
 
-    pub async fn run(&self, args: &RegistryArgs) -> Result<()> {
+    pub async fn run(&self, args: &RegistryInitArgs) -> Result<()> {
         if self.is_container_exists(&args.name).await? {
             println!("Container {} already exists", args.name);
             return Ok(());
@@ -86,7 +86,7 @@ impl Registry {
 }
 
 #[tokio::main]
-pub async fn run_container(args: &RegistryArgs) -> Result<()> {
+pub async fn run_container(args: &RegistryInitArgs) -> Result<()> {
     let registry = Registry::try_new()?;
     registry.run(args).await?;
     Ok(())

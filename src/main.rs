@@ -1,6 +1,8 @@
 use anyhow::Result;
 use clap::Parser;
-use light_guide::{file_server, registry, web_server, Cli, Commands::*, FsCommands};
+use light_guide::{
+    file_server, registry, web_server, Cli, Commands::*, FsCommands, RegistryCommands,
+};
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -24,10 +26,20 @@ fn main() -> Result<()> {
                 file_server::stop_server()?
             }
         },
-        Registry(args) => {
-            println!("Running registry with args: {:?}", args);
-            registry::run_container(args)?
-        }
+        Registry(args) => match &args.cmd {
+            RegistryCommands::Init(args) => {
+                println!("Initializing registry with args: {:?}", args);
+                registry::run_container(args)?
+            }
+            RegistryCommands::Images(args) => {
+                println!("Listing images with args: {:?}", args);
+                // registry::list_images(args)?
+            }
+            RegistryCommands::Import(args) => {
+                println!("Importing image with args: {:?}", args);
+                // registry::import_image(args)?
+            }
+        },
     }
 
     Ok(())

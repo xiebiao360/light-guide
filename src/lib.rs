@@ -71,8 +71,22 @@ pub struct FsRunArgs {
     pub path: String,
 }
 
-#[derive(Debug, Args)]
+#[derive(Parser)]
+#[command(version, about, long_about = None)]
 pub struct RegistryArgs {
+    #[command(subcommand)]
+    pub cmd: RegistryCommands,
+}
+
+#[derive(Subcommand)]
+pub enum RegistryCommands {
+    Init(RegistryInitArgs),
+    Images(RegistryImagesArgs),
+    Import(RegistryImportArgs),
+}
+
+#[derive(Debug, Args)]
+pub struct RegistryInitArgs {
     /// Name of the registry
     #[arg(short, long, default_value = "light-registry")]
     pub name: String,
@@ -85,6 +99,25 @@ pub struct RegistryArgs {
     /// Image file to use. e.g. registry:2.tar
     #[arg(long)]
     pub image_file: Option<String>,
+}
+
+#[derive(Debug, Args)]
+pub struct RegistryImagesArgs {
+    /// Name of the registry
+    #[arg(short, long, default_value = "light-registry")]
+    pub registry: String,
+}
+
+#[derive(Debug, Args)]
+pub struct RegistryImportArgs {
+    /// Name of the registry
+    #[arg(short, long, default_value = "light-registry")]
+    pub registry: String,
+    /// Image to import
+    #[arg(short, long)]
+    pub image: String,
+    /// Image file to use. e.g. redis:6.tar
+    pub image_file: String,
 }
 
 pub fn is_daemon_running(pid_file: &str) -> bool {
