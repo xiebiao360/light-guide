@@ -11,6 +11,7 @@ use std::{fs::File, io::Read, process::Command};
 use clap::{Args, Parser, Subcommand};
 pub use handlers::*;
 pub use models::*;
+extern crate rcgen;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -100,6 +101,9 @@ pub struct RegistryInitArgs {
     /// Image file to use. e.g. registry:2.tar
     #[arg(long)]
     pub image_file: Option<String>,
+    /// cert file path
+    #[arg(long, default_value = "certs")]
+    pub cert_dir: String,
 }
 
 #[derive(Debug, Args)]
