@@ -3,6 +3,7 @@ pub mod file_server;
 mod handlers;
 mod models;
 pub mod registry;
+pub mod utils;
 pub mod web_server;
 
 use std::{fs::File, io::Read, process::Command};

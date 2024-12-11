@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::Parser;
 use light_guide::{
-    file_server, registry, web_server, Cli, Commands::*, FsCommands, RegistryCommands,
+    file_server, registry, utils, web_server, Cli, Commands::*, FsCommands, RegistryCommands,
 };
 
 fn main() -> Result<()> {
@@ -34,6 +34,8 @@ fn main() -> Result<()> {
             RegistryCommands::Images(args) => {
                 println!("Listing images with args: {:?}", args);
                 // registry::list_images(args)?
+                let str = utils::get_local_ip();
+                println!("{}", str.unwrap());
             }
             RegistryCommands::Import(args) => {
                 println!("Importing image with args: {:?}", args);
