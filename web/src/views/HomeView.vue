@@ -7,6 +7,7 @@ const navs = [
   { name: '资源管理', path: '/file-manager' },
   { name: '版本管理', path: '/version' },
   { name: '一键安装', path: '/install' },
+  { name: '镜像仓库', path: '/registry' },
 ]
 const goto = path => router.push(path)
 

@@ -45,6 +45,23 @@ const routes = [
         path: '/install',
         component: () => import('@/views/install/Index.vue'),
       },
+      {
+        name: 'registry',
+        path: '/registry',
+        component: () => import('@/views/registry/Index.vue'),
+        children: [
+          {
+            name: 'create',
+            path: 'create',
+            component: () => import('@/views/registry/Create.vue'),
+          },
+          {
+            name: 'error',
+            path: 'error',
+            component: () => import('@/views/registry/Error.vue'),
+          },
+        ],
+      },
     ],
   },
 ]
