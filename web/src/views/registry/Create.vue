@@ -5,15 +5,17 @@ const create_method = ref('')
 
 <template>
   <div class="create_container">
-    <a-page-header style="padding: 0px" title="创建镜像仓库" />
-    <div class="content">
-      <div v-if="create_method.length === 0">
+    <template v-if="create_method.length === 0">
+      <div class="content">
         <a-space>
           <a-button @click="create_method = 'create'">创建镜像仓库</a-button>
           <a-button @click="create_method = 'connect_other'">连接到其他镜像仓库</a-button>
         </a-space>
       </div>
-      <div v-else-if="create_method === 'create'">
+    </template>
+    <template v-else-if="create_method === 'create'">
+      <a-page-header style="padding: 0px" title="创建镜像仓库" @back="create_method = ''" />
+      <div class="content">
         <a-form>
           <a-form-item label="镜像仓库名称">
             <a-input v-model="name" />
@@ -26,7 +28,10 @@ const create_method = ref('')
           </a-form-item>
         </a-form>
       </div>
-      <div v-else-if="create_method === 'connect_other'">
+    </template>
+    <template v-else-if="create_method === 'connect_other'">
+      <a-page-header style="padding: 0px" title="连接到其他镜像仓库" @back="create_method = ''" />
+      <div class="content">
         <a-form>
           <a-form-item label="镜像仓库地址">
             <a-input v-model="address" />
@@ -36,7 +41,7 @@ const create_method = ref('')
           </a-form-item>
         </a-form>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 

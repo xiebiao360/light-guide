@@ -5,6 +5,7 @@ mod models;
 pub mod registry;
 pub mod utils;
 pub mod web_server;
+mod background;
 
 use std::{fs::File, io::Read, process::Command};
 
