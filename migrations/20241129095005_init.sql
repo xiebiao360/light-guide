@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS registry (
     password TEXT NOT NULL,
     cert_file TEXT NOT NULL,
     key_file TEXT NOT NULL,
-    status TEXT NOT NULL, -- active, inactive
+    status TEXT,
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
 );
