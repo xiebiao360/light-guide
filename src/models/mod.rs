@@ -1,6 +1,6 @@
 mod docker;
+pub mod registry;
 mod settings;
-mod registry;
 
 pub use docker::DockerClient;
 use serde::{Deserialize, Serialize};

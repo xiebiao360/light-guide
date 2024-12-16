@@ -34,6 +34,9 @@ pub enum AppError {
 
     #[error("io error: {0}")]
     IOError(#[from] std::io::Error),
+
+    #[error("input params error: {0}")]
+    InputParamsError(String),
 }
 
 impl ErrorOutput {
@@ -54,6 +57,7 @@ impl IntoResponse for AppError {
             AppError::MigrateError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::MultipartError(_) => StatusCode::BAD_REQUEST,
             AppError::IOError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::InputParamsError(_) => StatusCode::BAD_REQUEST,
         };
 
         (status, Json(ErrorOutput::new(self.to_string()))).into_response()

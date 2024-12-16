@@ -1,5 +1,6 @@
 use anyhow::Result;
 use chrono::Utc;
+use serde::Deserialize;
 use sqlx::FromRow;
 
 use crate::web_server::AppState;
@@ -49,6 +50,34 @@ impl Default for Registry {
     }
 }
 
+#[derive(Debug, Deserialize)]
+pub struct CreateRegistryInput {
+    pub name: String,
+    pub host: String,
+    pub port: i64,
+    pub ssl: Option<SslType>,
+    pub auth: Option<Auth>,
+}
+#[derive(Debug, Deserialize)]
+pub enum SslType {
+    SelfSigned(SelfSignedSsl),
+    Provided(ProvidedSsl),
+}
+#[derive(Debug, Deserialize)]
+pub struct SelfSignedSsl {
+    pub cert_dir: String,
+}
+#[derive(Debug, Deserialize)]
+pub struct ProvidedSsl {
+    pub cert_file: String,
+    pub key_file: String,
+}
+#[derive(Debug, Deserialize)]
+pub struct Auth {
+    pub username: String,
+    pub password: String,
+}
+
 impl AppState {
     pub async fn get_registries(&self) -> Result<Vec<Registry>> {
         let registries = sqlx::query_as(r#"SELECT * FROM registry"#)
@@ -85,11 +114,29 @@ impl AppState {
         Ok(registry)
     }
 
+    pub async fn update_status(&self, id: i64, status: &str) -> Result<()> {
+        sqlx::query(r#"UPDATE registry SET status = $1 WHERE id = $2"#)
+            .bind(status)
+            .bind(id)
+            .execute(&self.pool)
+            .await?;
+        Ok(())
+    }
+
     pub async fn delete_registry(&self, id: i64) -> Result<()> {
         sqlx::query(r#"DELETE FROM registry WHERE id = $1"#)
             .bind(id)
             .execute(&self.pool)
             .await?;
         Ok(())
+    }
+
+    // 根据名词获取仓库
+    pub async fn get_registry_by_name(&self, name: &str) -> Result<Option<Registry>> {
+        let registry = sqlx::query_as(r#"SELECT * FROM registry WHERE name = $1"#)
+            .bind(name)
+            .fetch_optional(&self.pool)
+            .await?;
+        Ok(registry)
     }
 }
