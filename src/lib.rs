@@ -1,3 +1,4 @@
+mod background;
 mod error;
 pub mod file_server;
 mod handlers;
@@ -5,14 +6,13 @@ mod models;
 pub mod registry;
 pub mod utils;
 pub mod web_server;
-mod background;
 
 use std::{fs::File, io::Read, process::Command};
 
+pub use background::{register_runner, start_background};
 use clap::{Args, Parser, Subcommand};
 pub use handlers::*;
 pub use models::*;
-extern crate rcgen;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]

@@ -1,3 +1,4 @@
+mod registry_update_runner;
 use std::{sync::Mutex, thread};
 
 use once_cell::sync::Lazy;
