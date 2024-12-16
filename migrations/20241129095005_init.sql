@@ -10,11 +10,12 @@ CREATE TABLE IF NOT EXISTS settings (
 CREATE TABLE IF NOT EXISTS registry (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
+    host TEXT NOT NULL DEFAULT 'localhost',
     port INTEGER NOT NULL,
-    username TEXT NOT NULL,
-    password TEXT NOT NULL,
-    cert_file TEXT NOT NULL,
-    key_file TEXT NOT NULL,
+    username TEXT,
+    password TEXT,
+    cert_file TEXT,
+    key_file TEXT,
     status TEXT,
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
