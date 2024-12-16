@@ -18,12 +18,12 @@ pub async fn sse_handler(
 ) -> Sse<impl Stream<Item = Result<Event, Infallible>>> {
     info!("User-Agent: {} connected", user_agent);
 
-    let agents = &state.agents;
+    let agents = &state.clients;
     let rx = if let Some(tx) = agents.get(user_agent.as_str()) {
         tx.subscribe()
     } else {
         let (tx, rx) = broadcast::channel(100);
-        state.agents.insert(user_agent.to_string(), tx);
+        state.clients.insert(user_agent.to_string(), tx);
         rx
     };
 

@@ -2,7 +2,7 @@ use axum::{extract::State, response::IntoResponse, Json};
 
 use crate::{
     error::AppError,
-    models::registry::{CreateRegistryInput, Registry, SslType},
+    models::registry::{CreateRegistryInput, SslType},
     utils::generate_self_signed_file,
     web_server::AppState,
 };
@@ -36,7 +36,7 @@ pub async fn create_registry_handler(
             }
             SslType::Provided(p) => (p.cert_file, p.key_file),
         };
-    };
+    }
 
     Ok(())
 }

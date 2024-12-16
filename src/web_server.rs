@@ -20,7 +20,7 @@ use crate::{
     sse_handler, static_handler, AppEvent, AppSettings, RunArgs,
 };
 
-pub type AgentMap = Arc<DashMap<String, broadcast::Sender<Arc<AppEvent>>>>;
+pub type ClientMap = Arc<DashMap<String, broadcast::Sender<Arc<AppEvent>>>>;
 
 #[derive(Debug, Clone)]
 pub struct AppState {
@@ -30,7 +30,7 @@ pub struct AppState {
 #[allow(unused)]
 pub struct AppStateInner {
     pub(crate) pool: SqlitePool,
-    pub(crate) agents: AgentMap,
+    pub(crate) clients: ClientMap,
 }
 
 impl fmt::Debug for AppStateInner {
@@ -71,7 +71,7 @@ impl AppState {
         let agents = Arc::new(DashMap::new());
 
         Ok(Self {
-            inner: Arc::new(AppStateInner { pool, agents }),
+            inner: Arc::new(AppStateInner { pool, clients: agents }),
         })
     }
 }
