@@ -41,7 +41,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
         <VSpacer />
 
         <IconBtn
-          href="https://github.com/themeselection/materio-vuetify-vuejs-admin-template-free"
+          href="https://github.com/xiebiao360/light-guide"
           target="_blank"
           rel="noopener noreferrer"
         >
