@@ -1,11 +1,18 @@
-<script lang="ts" setup>
-interface Props {
-  menuList?: unknown[]
-  itemProps?: boolean
-  iconSize?: string
-}
-
-const props = defineProps<Props>()
+<script setup>
+const props = defineProps({
+  menuList: {
+    type: Array,
+    required: false,
+  },
+  itemProps: {
+    type: Boolean,
+    required: false,
+  },
+  iconSize: {
+    type: String,
+    required: false,
+  },
+})
 </script>
 
 <template>

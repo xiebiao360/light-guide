@@ -1,9 +1,10 @@
-<script lang="ts" setup>
-import type { NavGroup } from '@layouts/types'
-
-defineProps<{
-  item: Omit<NavGroup, 'children'>
-}>()
+<script setup>
+const props = defineProps({
+  item: {
+    type: Object,
+    required: true,
+  },
+})
 
 const isOpen = ref(false)
 </script>

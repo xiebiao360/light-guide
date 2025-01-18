@@ -1,9 +1,6 @@
-import type { ThemeDefinition } from 'vuetify'
-
 export const staticPrimaryColor = '#8C57FF'
 export const staticPrimaryDarkenColor = '#7E4EE6'
-
-export const themes: Record<string, ThemeDefinition> = {
+export const themes = {
   light: {
     dark: false,
     colors: {
@@ -46,7 +43,6 @@ export const themes: Record<string, ThemeDefinition> = {
       'track-bg': '#F0F2F8',
       'chat-bg': '#F7F6FA',
     },
-
     variables: {
       'code-color': '#d400ff',
       'overlay-scrim-background': '#2E263D',
@@ -74,7 +70,6 @@ export const themes: Record<string, ThemeDefinition> = {
       'shadow-xl-opacity': '0.24',
     },
   },
-
   dark: {
     dark: true,
     colors: {
@@ -117,7 +112,6 @@ export const themes: Record<string, ThemeDefinition> = {
       'track-bg': '#474360',
       'chat-bg': '#373452',
     },
-
     variables: {
       'code-color': '#d400ff',
       'overlay-scrim-background': '#312D4B',
@@ -146,5 +140,4 @@ export const themes: Record<string, ThemeDefinition> = {
     },
   },
 }
-
 export default themes

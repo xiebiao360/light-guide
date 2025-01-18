@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup>
 const isCurrentPasswordVisible = ref(false)
 const isNewPasswordVisible = ref(false)
 const isConfirmPasswordVisible = ref(false)
@@ -34,10 +34,22 @@ const serverKeys = [
 ]
 
 const recentDevicesHeaders = [
-  { title: 'BROWSER', key: 'browser' },
-  { title: 'DEVICE', key: 'device' },
-  { title: 'LOCATION', key: 'location' },
-  { title: 'RECENT ACTIVITY', key: 'recentActivity' },
+  {
+    title: 'BROWSER',
+    key: 'browser',
+  },
+  {
+    title: 'DEVICE',
+    key: 'device',
+  },
+  {
+    title: 'LOCATION',
+    key: 'location',
+  },
+  {
+    title: 'RECENT ACTIVITY',
+    key: 'recentActivity',
+  },
 ]
 
 const recentDevices = [
@@ -46,42 +58,60 @@ const recentDevices = [
     device: 'HP Spectre 360',
     location: 'New York, NY',
     recentActivity: '28 Apr 2022, 18:20',
-    deviceIcon: { icon: 'ri-macbook-line', color: 'primary' },
+    deviceIcon: {
+      icon: 'ri-macbook-line',
+      color: 'primary',
+    },
   },
   {
     browser: 'Chrome on iPhone',
     device: 'iPhone 12x',
     location: 'Los Angeles, CA',
     recentActivity: '20 Apr 2022, 10:20',
-    deviceIcon: { icon: 'ri-android-line', color: 'error' },
+    deviceIcon: {
+      icon: 'ri-android-line',
+      color: 'error',
+    },
   },
   {
     browser: 'Chrome on Android',
     device: 'Oneplus 9 Pro',
     location: 'San Francisco, CA',
     recentActivity: '16 Apr 2022, 04:20',
-    deviceIcon: { icon: 'ri-smartphone-line', color: 'success' },
+    deviceIcon: {
+      icon: 'ri-smartphone-line',
+      color: 'success',
+    },
   },
   {
     browser: 'Chrome on macOS',
     device: 'Apple iMac',
     location: 'New York, NY',
     recentActivity: '28 Apr 2022, 18:20',
-    deviceIcon: { icon: 'ri-mac-line', color: 'secondary' },
+    deviceIcon: {
+      icon: 'ri-mac-line',
+      color: 'secondary',
+    },
   },
   {
     browser: 'Chrome on Windows',
     device: 'HP Spectre 360',
     location: 'Los Angeles, CA',
     recentActivity: '20 Apr 2022, 10:20',
-    deviceIcon: { icon: 'ri-macbook-line', color: 'primary' },
+    deviceIcon: {
+      icon: 'ri-macbook-line',
+      color: 'primary',
+    },
   },
   {
     browser: 'Chrome on Android',
     device: 'Oneplus 9 Pro',
     location: 'San Francisco, CA',
     recentActivity: '16 Apr 2022, 04:20',
-    deviceIcon: { icon: 'ri-android-line', color: 'success' },
+    deviceIcon: {
+      icon: 'ri-android-line',
+      color: 'success',
+    },
   },
 ]
 </script>

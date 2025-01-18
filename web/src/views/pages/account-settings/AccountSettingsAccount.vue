@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup>
 import avatar1 from '@images/avatars/avatar-1.png'
 
 const accountData = {
@@ -17,8 +17,7 @@ const accountData = {
   currency: 'USD',
 }
 
-const refInputEl = ref<HTMLElement>()
-
+const refInputEl = ref()
 const accountDataLocal = ref(structuredClone(accountData))
 const isAccountDeactivated = ref(false)
 
@@ -26,11 +25,9 @@ const resetForm = () => {
   accountDataLocal.value = structuredClone(accountData)
 }
 
-// changeAvatar function
-const changeAvatar = (file: Event) => {
+const changeAvatar = file => {
   const fileReader = new FileReader()
-  const { files } = file.target as HTMLInputElement
-
+  const { files } = file.target
   if (files && files.length) {
     fileReader.readAsDataURL(files[0])
     fileReader.onload = () => {

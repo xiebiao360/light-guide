@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { useTheme } from 'vuetify'
 import misc404 from '@images/pages/404.png'
 import miscMaskDark from '@images/pages/misc-mask-dark.png'
@@ -8,9 +8,7 @@ import tree from '@images/pages/tree.png'
 const vuetifyTheme = useTheme()
 
 const authThemeMask = computed(() => {
-  return vuetifyTheme.global.name.value === 'light'
-    ? miscMaskLight
-    : miscMaskDark
+  return vuetifyTheme.global.name.value === 'light' ? miscMaskLight : miscMaskDark
 })
 </script>
 

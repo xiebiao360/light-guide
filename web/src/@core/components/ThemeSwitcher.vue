@@ -1,13 +1,23 @@
-<script setup lang="ts">
+<script setup>
 import { useTheme } from 'vuetify'
-import type { ThemeSwitcherTheme } from '@layouts/types'
 
-const props = defineProps<{
-  themes: ThemeSwitcherTheme[]
-}>()
+const props = defineProps({
+  themes: {
+    type: Array,
+    required: true,
+  },
+})
 
-const { name: themeName, global: globalTheme } = useTheme()
-const { state: currentThemeName, next: getNextThemeName, index: currentThemeIndex } = useCycleList(props.themes.map(t => t.name), { initialValue: themeName })
+const {
+  name: themeName,
+  global: globalTheme,
+} = useTheme()
+
+const {
+  state: currentThemeName,
+  next: getNextThemeName,
+  index: currentThemeIndex,
+} = useCycleList(props.themes.map(t => t.name), { initialValue: themeName })
 
 const changeTheme = () => {
   globalTheme.name.value = getNextThemeName()

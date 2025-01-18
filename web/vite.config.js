@@ -39,6 +39,10 @@ export default defineConfig({
 
       // ℹ️ Disabled to avoid confusion & accidental usage
       ignore: ['useCookies', 'useStorage'],
+      eslintrc: {
+        enabled: true,
+        filepath: './.eslintrc-auto-import.json',
+      },
     }),
     svgLoader(),
   ],
@@ -58,14 +62,8 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['vuetify'],
-    entries: ['./src/**/*.vue'],
-  },
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-      },
-    },
+    entries: [
+      './src/**/*.vue',
+    ],
   },
 })

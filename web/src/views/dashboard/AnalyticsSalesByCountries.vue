@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 const salesByCountries = [
   {
     abbr: 'US',
@@ -43,9 +43,18 @@ const salesByCountries = [
 ]
 
 const moreList = [
-  { title: 'Yesterday', value: 'Yesterday' },
-  { title: 'Last Week', value: 'Last Week' },
-  { title: 'Last Month', value: 'Last Month' },
+  {
+    title: 'Yesterday',
+    value: 'Yesterday',
+  },
+  {
+    title: 'Last Week',
+    value: 'Last Week',
+  },
+  {
+    title: 'Last Month',
+    value: 'Last Month',
+  },
 ]
 </script>
 

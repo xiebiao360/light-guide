@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 const statistics = [
   {
     title: 'Sales',
@@ -27,9 +27,18 @@ const statistics = [
 ]
 
 const moreList = [
-  { title: 'Share', value: 'Share' },
-  { title: 'Refresh', value: 'Refresh' },
-  { title: 'Update', value: 'Update' },
+  {
+    title: 'Share',
+    value: 'Share',
+  },
+  {
+    title: 'Refresh',
+    value: 'Refresh',
+  },
+  {
+    title: 'Update',
+    value: 'Update',
+  },
 ]
 </script>
 

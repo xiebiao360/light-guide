@@ -1,40 +1,41 @@
-<script lang="ts" setup>
-import type { Component } from 'vue'
+<script setup>
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useDisplay } from 'vuetify'
 import logo from '@images/logo.svg?raw'
 
-interface Props {
-  tag?: string | Component
-  isOverlayNavActive: boolean
-  toggleIsOverlayNavActive: (value: boolean) => void
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  tag: 'aside',
+const props = defineProps({
+  tag: {
+    type: null,
+    required: false,
+    default: 'aside',
+  },
+  isOverlayNavActive: {
+    type: Boolean,
+    required: true,
+  },
+  toggleIsOverlayNavActive: {
+    type: Function,
+    required: true,
+  },
 })
 
 const { mdAndDown } = useDisplay()
-
 const refNav = ref()
 
-/*
-  ℹ️ Close overlay side when route is changed
-  Close overlay vertical nav when link is clicked
+/*ℹ️ Close overlay side when route is changed
+Close overlay vertical nav when link is clicked
 */
 const route = useRoute()
 
-watch(
-  () => route.path,
-  () => {
-    props.toggleIsOverlayNavActive(false)
-  })
+watch(() => route.path, () => {
+  props.toggleIsOverlayNavActive(false)
+})
 
 const isVerticalNavScrolled = ref(false)
-const updateIsVerticalNavScrolled = (val: boolean) => isVerticalNavScrolled.value = val
+const updateIsVerticalNavScrolled = val => isVerticalNavScrolled.value = val
 
-const handleNavScroll = (evt: Event) => {
-  isVerticalNavScrolled.value = (evt.target as HTMLElement).scrollTop > 0
+const handleNavScroll = evt => {
+  isVerticalNavScrolled.value = evt.target.scrollTop > 0
 }
 </script>
 

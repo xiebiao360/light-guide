@@ -1,5 +1,3 @@
-import type { App } from 'vue'
-
 /**
  * This is helper function to register plugins like a nuxt
  * To register a plugin just export a const function `defineVuePlugin` that takes `app` as argument and call `app.use`
@@ -40,10 +38,8 @@ import type { App } from 'vue'
  * app.mount('#app')
  * ```
  */
-
-export const registerPlugins = (app: App) => {
-  const imports = import.meta.glob<{ default: (app: App) => void }>(['../../plugins/*.{ts,js}', '../../plugins/*/index.{ts,js}'], { eager: true })
-
+export const registerPlugins = app => {
+  const imports = import.meta.glob(['../../plugins/*.{ts,js}', '../../plugins/*/index.{ts,js}'], { eager: true })
   const importPaths = Object.keys(imports).sort()
 
   importPaths.forEach(path => {

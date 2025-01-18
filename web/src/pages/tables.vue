@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import DemoSimpleTableBasics from '@/views/pages/tables/DemoSimpleTableBasics.vue'
 import DemoSimpleTableDensity from '@/views/pages/tables/DemoSimpleTableDensity.vue'
 import DemoSimpleTableFixedHeader from '@/views/pages/tables/DemoSimpleTableFixedHeader.vue'

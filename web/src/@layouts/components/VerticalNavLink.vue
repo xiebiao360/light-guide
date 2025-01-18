@@ -1,9 +1,10 @@
-<script lang="ts" setup>
-import type { NavLink } from '@layouts/types'
-
-defineProps<{
-  item: NavLink
-}>()
+<script setup>
+const props = defineProps({
+  item: {
+    type: null,
+    required: true,
+  },
+})
 </script>
 
 <template>

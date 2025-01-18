@@ -1,14 +1,26 @@
-<script setup lang="ts">
-interface Props {
-  title: string
-  color?: string
-  icon: string
-  stats: number
-  change: number
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  color: 'primary',
+<script setup>
+const props = defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+  color: {
+    type: String,
+    required: false,
+    default: 'primary',
+  },
+  icon: {
+    type: String,
+    required: true,
+  },
+  stats: {
+    type: Number,
+    required: true,
+  },
+  change: {
+    type: Number,
+    required: true,
+  },
 })
 
 const isPositive = controlledComputed(() => props.change, () => Math.sign(props.change) === 1)
