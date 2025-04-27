@@ -13,20 +13,38 @@ pub fn Navbar() -> Element {
     rsx! {
         document::Link { rel: "stylesheet", href: NAVBAR_CSS }
 
-        div {
+        Header {
             id: "navbar",
-            Link {
-                to: Route::Home {},
-                "Home"
-            }
-            Link {
-                to: Route::Blog { id: 1 },
-                "Blog"
-            }
         }
+        Content {  }
+    }
+}
 
-        // The `Outlet` component is used to render the next component inside the layout. In this case, it will render either
-        // the [`Home`] or [`Blog`] component depending on the current route.
+#[component]
+pub fn Header() -> Element {
+    rsx! {
+        "header",
+    }
+}
+
+#[component]
+pub fn Content() -> Element {
+    rsx! {
+        SideMenu {  }
+        MainContent {  }
+    }
+}
+
+#[component]
+pub fn SideMenu() -> Element {
+    rsx! {
+        "side-menu",
+    }
+}
+
+#[component]
+pub fn MainContent() -> Element {
+    rsx! {
         Outlet::<Route> {}
     }
 }
