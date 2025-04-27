@@ -1,5 +1,5 @@
 use crate::Route;
-use dioxus::prelude::*;
+use dioxus::{html::div, prelude::*};
 
 const NAVBAR_CSS: Asset = asset!("/assets/styling/navbar.css");
 
@@ -13,37 +13,55 @@ pub fn Navbar() -> Element {
     rsx! {
         document::Link { rel: "stylesheet", href: NAVBAR_CSS }
 
-        Header {
+        div {
+            id: "navbar",
+            Left {}
+            Content {}
         }
-        Content {  }
     }
 }
 
 #[component]
-pub fn Header() -> Element {
+pub fn Left() -> Element {
     rsx! {
-        "header",
+        div {
+            id: "left",
+            div {
+                id: "env",
+                input {  }
+            }
+        }
     }
 }
 
 #[component]
 pub fn Content() -> Element {
     rsx! {
-        SideMenu {  }
-        MainContent {  }
+        div {
+            id: "content",
+            Header {}
+            MainContent {}
+        }
     }
 }
 
 #[component]
-pub fn SideMenu() -> Element {
+pub fn Header() -> Element {
     rsx! {
-        "side-menu",
+        div {
+            id: "header",
+            "header",
+        }
     }
 }
 
 #[component]
 pub fn MainContent() -> Element {
     rsx! {
-        Outlet::<Route> {}
+        div {
+            id: "main-content",
+            // The Outlet component will render the current route's component
+            Outlet::<Route> {}
+        }
     }
 }
