@@ -48,7 +48,11 @@ pub fn Left() -> Element {
                     }
                     li {
                         class: "menu-item",
-                        "博客"
+                        "应用"
+                    }
+                    li {
+                        class: "menu-item",
+                        "日志"
                     }
                     li {
                         class: "menu-item",
