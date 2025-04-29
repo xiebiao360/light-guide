@@ -1,5 +1,5 @@
 use crate::Route;
-use dioxus::{html::div, prelude::*};
+use dioxus::prelude::*;
 
 const NAVBAR_CSS: Asset = asset!("/assets/styling/navbar.css");
 
@@ -26,9 +26,48 @@ pub fn Left() -> Element {
     rsx! {
         div {
             id: "left",
+            // 工作区切换
             div {
-                id: "env",
-                input {  }
+                id: "workspace-switcher",
+                select {
+                    class: "workspace-select",
+                    option { "工作区1" }
+                    option { "工作区2" }
+                    option { "工作区3" }
+                }
+            }
+            
+            // 主菜单
+            nav {
+                id: "main-menu",
+                ul {
+                    class: "menu-list",
+                    li {
+                        class: "menu-item active",
+                        "首页"
+                    }
+                    li {
+                        class: "menu-item",
+                        "博客"
+                    }
+                    li {
+                        class: "menu-item",
+                        "设置"
+                    }
+                }
+            }
+
+            // 用户信息
+            div {
+                id: "user-profile",
+                div {
+                    class: "avatar",
+                    "头像"
+                }
+                div {
+                    class: "username",
+                    "用户名"
+                }
             }
         }
     }
@@ -50,7 +89,26 @@ pub fn Header() -> Element {
     rsx! {
         div {
             id: "header",
-            "header",
+            // 面包屑导航
+            div {
+                class: "breadcrumbs",
+                span { "首页" }
+                span { ">" }
+                span { "控制台" }
+            }
+            
+            // 操作按钮区
+            div {
+                class: "action-buttons",
+                button {
+                    class: "btn primary",
+                    "新建"
+                }
+                button {
+                    class: "btn",
+                    "刷新"
+                }
+            }
         }
     }
 }

@@ -12,18 +12,71 @@
   flex-direction: column;
 }
 
-#left #env {
-  height: 100px;
-  background-color: aqua;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* 左侧菜单区域样式 */
+#left {
+  background-color: #1e3a8a;
+  color: white;
+  padding: 20px 0;
 }
 
-#left #env input {
-  font-size: 24px;
+#workspace-switcher {
+  padding: 0 20px 20px;
+}
+
+.workspace-select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: none;
+  background-color: #3b82f6;
+  color: white;
+}
+
+#main-menu {
+  margin: 20px 0;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+  background-color: #3b82f6;
+}
+
+.menu-item.active {
+  background-color: #2563eb;
+  border-left: 3px solid white;
+}
+
+#user-profile {
+  margin-top: auto;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.username {
   font-weight: bold;
-  width: 80%;
 }
 
 #navbar #content {
@@ -35,7 +88,51 @@
 
 #content #header {
   height: 60px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  background-color: white;
+}
+
+.breadcrumbs {
+  display: flex;
+  gap: 8px;
+  color: #64748b;
+}
+
+.breadcrumbs span:last-child {
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #f8fafc;
+}
+
+.btn.primary {
+  background-color: #1e3a8a;
+  color: white;
+  border-color: #1e3a8a;
+}
+
+.btn.primary:hover {
+  background-color: #1d4ed8;
 }
 
 #content #main-content {
