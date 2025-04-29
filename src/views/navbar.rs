@@ -24,10 +24,10 @@ pub fn Navbar() -> Element {
 
 #[component]
 pub fn Left() -> Element {
-    let show_dialog = use_signal(|| false);
-    let workspace_type = use_signal(|| "");
-    let workspace_name = use_signal(|| String::new());
-    let workspaces = use_signal(|| {
+    let mut show_dialog = use_signal(|| false);
+    let mut workspace_type = use_signal(|| "");
+    let mut workspace_name = use_signal(|| String::new());
+    let mut workspaces = use_signal(|| {
         vec![
             "工作区1".to_string(),
             "工作区2".to_string(),
@@ -45,7 +45,6 @@ pub fn Left() -> Element {
                     class: "workspace-select",
                     onchange: move |e| {
                         if e.value() == "new" {
-                            to_owned![show_dialog];
                             show_dialog.set(true);
                         }
                     },
@@ -60,7 +59,6 @@ pub fn Left() -> Element {
             Dialog {
                 show: show_dialog(),
                 on_close: move |_| {
-                    to_owned![show_dialog];
                     show_dialog.set(false)
                 },
                 div {
@@ -72,7 +70,6 @@ pub fn Left() -> Element {
                         div {
                             class: "dialog-option",
                             onclick: move |_| {
-                                to_owned![workspace_type];
                                 workspace_type.set("local")
                             },
                             "从本地环境创建"
@@ -80,7 +77,6 @@ pub fn Left() -> Element {
                         div {
                             class: "dialog-option",
                             onclick: move |_| {
-                                to_owned![workspace_type];
                                 workspace_type.set("docker")
                             },
                             "从Docker环境创建"
@@ -88,7 +84,6 @@ pub fn Left() -> Element {
                         div {
                             class: "dialog-option",
                             onclick: move |_| {
-                                to_owned![workspace_type];
                                 workspace_type.set("kubernetes")
                             },
                             "从Kubernetes环境创建"
@@ -99,7 +94,6 @@ pub fn Left() -> Element {
                         class: "dialog-input",
                         placeholder: "输入工作区名称",
                         oninput: move |e| {
-                            to_owned![workspace_name];
                             workspace_name.set(e.value());
                         },
                     }
@@ -109,7 +103,6 @@ pub fn Left() -> Element {
                         button {
                             class: "dialog-button secondary",
                             onclick: move |_| {
-                                to_owned![show_dialog];
                                 show_dialog.set(false)
                             },
                             "取消"
@@ -118,7 +111,6 @@ pub fn Left() -> Element {
                             class: "dialog-button primary",
                             onclick: move |_| {
                                 if !workspace_name().is_empty() {
-                                    to_owned![show_dialog, workspace_name, workspaces, workspace_type];
                                     let name = workspace_name().to_string();
                                     workspaces.write().push(name);
                                     show_dialog.set(false);
