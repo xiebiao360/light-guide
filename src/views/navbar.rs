@@ -1,5 +1,5 @@
 use crate::{components::Dialog, Route};
-use dioxus::{html::div, prelude::*};
+use dioxus::prelude::*;
 
 const NAVBAR_CSS: Asset = asset!("/assets/styling/navbar.css");
 
