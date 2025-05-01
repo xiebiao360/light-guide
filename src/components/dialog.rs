@@ -1,4 +1,4 @@
-use dioxus::{html::g::r, prelude::*};
+use dioxus::prelude::*;
 
 use super::LocalElement;
 
@@ -12,6 +12,7 @@ pub struct DialogProps {
     show: bool,
 }
 
+#[allow(non_snake_case)]
 pub fn Dialog(props: DialogProps) -> Element {
     let title_element = match &props.title {
         Some(LocalElement::String(s)) => rsx!(div { "{s}" }),
@@ -20,34 +21,24 @@ pub fn Dialog(props: DialogProps) -> Element {
     };
     rsx!(
         div {
+            class: "dialog-overlay",
             display: if props.show { "block" } else { "none" },
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0, 0, 0, 0.4)",
             div {
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                border_radius: "8px",
-                background: "#fff",
+                class: "dialog-content",
 
                 div {
                     class: "dialog-header",
-                    style: "padding: 16px; border-bottom: 1px solid #e0e0e0;",
+                    // style: "padding: 16px; border-bottom: 1px solid #e0e0e0;",
                     {title_element}
                 }
                 div {
                     class: "dialog-body",
-                    style: "padding: 16px;",
+                    // style: "padding: 16px;",
                     {props.children}
                 }
                 div {
                     class: "dialog-footer",
-                    style: "padding: 16px; border-top: 1px solid #e0e0e0;",
+                    // style: "padding: 16px; border-top: 1px solid #e0e0e0;",
                     button {
                         onclick: |_| {
                             // Close the dialog

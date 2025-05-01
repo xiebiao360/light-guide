@@ -57,7 +57,6 @@ pub fn Left() -> Element {
             Dialog {
                 show: show_dialog(),
                 div {
-                    class: "dialog-header",
                     "新建工作区"
                 }
                 div {
