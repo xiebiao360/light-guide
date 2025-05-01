@@ -56,11 +56,35 @@ pub fn Left() -> Element {
 
             Dialog {
                 show: show_dialog(),
+                title: "新建工作区",
+                onclose: move |_| {
+                    show_dialog.set(false);
+                },
+                onconfirm: move |_| {
+                    // Handle confirm action
+                    let new_workspace = format!("{} - {}", workspace_type(), workspace_name());
+                    workspaces.set({
+                        let mut ws = workspaces.read().clone();
+                        ws.push(new_workspace);
+                        ws
+                    });
+                    show_dialog.set(false);
+                },
+                validate: move |_| {
+                    let mut errors = Vec::new();
+                    if workspace_name().is_empty() {
+                        errors.push("工作区名称不能为空".to_string());
+                    }
+                    if workspace_type().is_empty() {
+                        errors.push("工作区类型不能为空".to_string());
+                    }
+                    if errors.is_empty() {
+                        None
+                    } else {
+                        Some(errors)
+                    }
+                },
                 div {
-                    "新建工作区"
-                }
-                div {
-                    class: "dialog-body",
                     div {
                         class: "form-group",
                         label { "工作区类型" }
@@ -85,30 +109,30 @@ pub fn Left() -> Element {
                         }
                     }
                 }
-                div {
-                    class: "dialog-footer",
-                    button {
-                        class: "btn primary",
-                        onclick: move |_| {
-                            // 处理新建工作区逻辑
-                            let new_workspace = format!("{} - {}", workspace_type(), workspace_name());
-                            workspaces.set({
-                                let mut ws = workspaces.read().clone();
-                                ws.push(new_workspace);
-                                ws
-                            });
-                            show_dialog.set(false);
-                        },
-                        "确定"
-                    }
-                    button {
-                        class: "btn",
-                        onclick: move |_| {
-                            show_dialog.set(false);
-                        },
-                        "取消"
-                    }
-                }
+                // div {
+                //     class: "dialog-footer",
+                //     button {
+                //         class: "btn primary",
+                //         onclick: move |_| {
+                //             // 处理新建工作区逻辑
+                //             let new_workspace = format!("{} - {}", workspace_type(), workspace_name());
+                //             workspaces.set({
+                //                 let mut ws = workspaces.read().clone();
+                //                 ws.push(new_workspace);
+                //                 ws
+                //             });
+                //             show_dialog.set(false);
+                //         },
+                //         "确定"
+                //     }
+                //     button {
+                //         class: "btn",
+                //         onclick: move |_| {
+                //             show_dialog.set(false);
+                //         },
+                //         "取消"
+                //     }
+                // }
             }
 
             // 主菜单
