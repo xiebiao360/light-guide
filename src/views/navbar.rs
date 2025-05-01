@@ -1,5 +1,5 @@
 use crate::{components::Dialog, Route};
-use dioxus::prelude::*;
+use dioxus::{html::div, prelude::*};
 
 const NAVBAR_CSS: Asset = asset!("/assets/styling/navbar.css");
 
@@ -40,17 +40,24 @@ pub fn Left() -> Element {
             // 工作区切换
             div {
                 id: "workspace-switcher",
-                select {
-                    class: "workspace-select",
-                    onchange: move |e| {
-                        if e.value() == "new" {
-                            show_dialog.set(true);
+                div {
+                    display: "flex",
+                    justify_content: "space-between",
+                    select {
+                        class: "workspace-select",
+                        for workspace in workspaces.read().iter() {
+                            option { key: "{workspace}", value: "{workspace}", "{workspace}" }
                         }
-                    },
-                    for workspace in workspaces.read().iter() {
-                        option { key: "{workspace}", value: "{workspace}", "{workspace}" }
                     }
-                    option { value: "new", "新建工作区" }
+                    button {
+                        class: "btn",
+                        width: "72px",
+                        margin_left: "10px",
+                        onclick: move |_| {
+                            show_dialog.set(true);
+                        },
+                        "新建"
+                    }
                 }
             }
 
@@ -68,7 +75,6 @@ pub fn Left() -> Element {
                         ws.push(new_workspace);
                         ws
                     });
-                    show_dialog.set(false);
                 },
                 validate: move |_| {
                     let mut errors = Vec::new();
