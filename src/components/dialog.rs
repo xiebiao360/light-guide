@@ -1,46 +1,61 @@
-use dioxus::{logger::tracing::info, prelude::*};
+use dioxus::{html::g::r, prelude::*};
+
+use super::LocalElement;
 
 #[derive(Props, Clone, PartialEq)]
 pub struct DialogProps {
-    show: bool,
-    on_close: EventHandler<()>,
+    /// The title of the dialog.
+    title: Option<LocalElement>,
+    /// The content of the dialog.
     children: Element,
+    /// Whether the dialog is visible or not.
+    show: bool,
 }
 
-#[component]
 pub fn Dialog(props: DialogProps) -> Element {
-    let mut overlay_class = use_signal(|| "dialog-overlay");
-    let mut content_class = use_signal(|| "dialog-content");
-
-    use_effect(move || {
-        info!("Dialog show: {}", props.show);
-        if props.show {
-            overlay_class.set("dialog-overlay show");
-            content_class.set("dialog-content show");
-        } else {
-            overlay_class.set("dialog-overlay");
-            content_class.set("dialog-content");
-        }
-    });
-
-    let overlay_class_str: &str = &overlay_class.read();
-    let content_class_str: &str = &content_class.read();
-
-    if !props.show {
-        rsx! {}
-    } else {
-        rsx! {
+    let title_element = match &props.title {
+        Some(LocalElement::String(s)) => rsx!(div { "{s}" }),
+        Some(LocalElement::Element(e)) => e.clone(),
+        None => rsx!(),
+    };
+    rsx!(
+        div {
+            display: if props.show { "block" } else { "none" },
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0, 0, 0, 0.4)",
             div {
-                class: overlay_class_str,
-                onclick: move |_| props.on_close.call(()),
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                border_radius: "8px",
+                background: "#fff",
 
                 div {
-                    class: content_class_str,
-                    onclick: |e| e.stop_propagation(),
-
+                    class: "dialog-header",
+                    style: "padding: 16px; border-bottom: 1px solid #e0e0e0;",
+                    {title_element}
+                }
+                div {
+                    class: "dialog-body",
+                    style: "padding: 16px;",
                     {props.children}
+                }
+                div {
+                    class: "dialog-footer",
+                    style: "padding: 16px; border-top: 1px solid #e0e0e0;",
+                    button {
+                        onclick: |_| {
+                            // Close the dialog
+                        },
+                        "Close"
+                    }
                 }
             }
         }
-    }
+    )
 }

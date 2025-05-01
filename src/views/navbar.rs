@@ -1,5 +1,4 @@
-use crate::components::dialog::Dialog;
-use crate::Route;
+use crate::{components::Dialog, Route};
 use dioxus::prelude::*;
 
 const NAVBAR_CSS: Asset = asset!("/assets/styling/navbar.css");
@@ -25,7 +24,7 @@ pub fn Navbar() -> Element {
 #[component]
 pub fn Left() -> Element {
     let mut show_dialog = use_signal(|| false);
-    let mut workspace_type = use_signal(|| "");
+    let mut workspace_type = use_signal(|| String::new());
     let mut workspace_name = use_signal(|| String::new());
     let mut workspaces = use_signal(|| {
         vec![
@@ -55,71 +54,60 @@ pub fn Left() -> Element {
                 }
             }
 
-            // 新建工作区对话框
             Dialog {
                 show: show_dialog(),
-                on_close: move |_| {
-                    show_dialog.set(false)
-                },
                 div {
-                    class: "dialog-content",
-                    h2 { class: "dialog-title", "新建工作区" }
-
+                    class: "dialog-header",
+                    "新建工作区"
+                }
+                div {
+                    class: "dialog-body",
                     div {
-                        class: "dialog-options",
-                        div {
-                            class: "dialog-option",
-                            onclick: move |_| {
-                                workspace_type.set("local")
+                        class: "form-group",
+                        label { "工作区类型" }
+                        select {
+                            class: "form-select",
+                            onchange: move |e| {
+                                workspace_type.set(e.value());
                             },
-                            "从本地环境创建"
-                        }
-                        div {
-                            class: "dialog-option",
-                            onclick: move |_| {
-                                workspace_type.set("docker")
-                            },
-                            "从Docker环境创建"
-                        }
-                        div {
-                            class: "dialog-option",
-                            onclick: move |_| {
-                                workspace_type.set("kubernetes")
-                            },
-                            "从Kubernetes环境创建"
+                            option { value: "type1", "类型1" }
+                            option { value: "type2", "类型2" }
                         }
                     }
-
-                    input {
-                        class: "dialog-input",
-                        placeholder: "输入工作区名称",
-                        oninput: move |e| {
-                            workspace_name.set(e.value());
+                    div {
+                        class: "form-group",
+                        label { "工作区名称" }
+                        input {
+                            class: "form-input",
+                            placeholder: "请输入工作区名称",
+                            oninput: move |e| {
+                                workspace_name.set(e.value());
+                            },
+                        }
+                    }
+                }
+                div {
+                    class: "dialog-footer",
+                    button {
+                        class: "btn primary",
+                        onclick: move |_| {
+                            // 处理新建工作区逻辑
+                            let new_workspace = format!("{} - {}", workspace_type(), workspace_name());
+                            workspaces.set({
+                                let mut ws = workspaces.read().clone();
+                                ws.push(new_workspace);
+                                ws
+                            });
+                            show_dialog.set(false);
                         },
+                        "确定"
                     }
-
-                    div {
-                        class: "dialog-buttons",
-                        button {
-                            class: "dialog-button secondary",
-                            onclick: move |_| {
-                                show_dialog.set(false)
-                            },
-                            "取消"
-                        }
-                        button {
-                            class: "dialog-button primary",
-                            onclick: move |_| {
-                                if !workspace_name().is_empty() {
-                                    let name = workspace_name().to_string();
-                                    workspaces.write().push(name);
-                                    show_dialog.set(false);
-                                    workspace_name.set(String::new());
-                                    workspace_type.set("");
-                                }
-                            },
-                            "确认"
-                        }
+                    button {
+                        class: "btn",
+                        onclick: move |_| {
+                            show_dialog.set(false);
+                        },
+                        "取消"
                     }
                 }
             }

@@ -1099,6 +1099,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "dioxus-material"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "31a0de16916c098d05c487780bbff43e1910a27cd41506accf2580995675f619"
+dependencies = [
+ "dioxus",
+ "dioxus-resize-observer",
+ "dioxus-spring",
+ "dioxus-use-mounted",
+ "log",
+]
+
+[[package]]
 name = "dioxus-mobile"
 version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1110,6 +1123,20 @@ dependencies = [
  "jni",
  "libc",
  "once_cell",
+]
+
+[[package]]
+name = "dioxus-resize-observer"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3e53618d802425520849a0103dc09694899fbba71f214bab000bfa0e68db0d35"
+dependencies = [
+ "dioxus",
+ "dioxus-use-mounted",
+ "dioxus-web",
+ "js-sys",
+ "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]
@@ -1167,6 +1194,33 @@ dependencies = [
  "rustc-hash",
  "tracing",
  "warnings",
+]
+
+[[package]]
+name = "dioxus-spring"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8c9e0e37d379f689288ec61214104a72de3537709f2b7f0a77085f2de24a8507"
+dependencies = [
+ "async-channel",
+ "dioxus",
+ "dioxus-use-mounted",
+ "futures",
+ "interpolation",
+ "js-sys",
+ "log",
+ "slotmap",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "dioxus-use-mounted"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7177eae935a9f5abdfd04ad47dc7cee2c2490b9f56aee0b5866f912470234b7f"
+dependencies = [
+ "dioxus-lib",
 ]
 
 [[package]]
@@ -2294,6 +2348,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "interpolation"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9c13ae9d91148fcb4aab6654c4c2a7d02a15395ea9e23f65170f175f8b269ce"
+
+[[package]]
 name = "ipnet"
 version = "2.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2476,6 +2536,7 @@ name = "light-guide"
 version = "0.1.0"
 dependencies = [
  "dioxus",
+ "dioxus-material",
 ]
 
 [[package]]
