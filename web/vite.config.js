@@ -7,7 +7,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/web/',
+  base: '/static/',
   server: {
     port: 3000,
     open: true,
@@ -33,7 +33,7 @@ export default defineConfig({
     include: ['vue', 'vue-router', 'vuex', 'axios']
   },
   build: {
-    outDir: '../dist',
+    outDir: '../static',
     sourcemap: true,
     rollupOptions: {
       output: {

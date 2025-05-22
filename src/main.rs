@@ -12,7 +12,7 @@ async fn main() -> Result<()> {
     let db_path = "sqlite://guide.db";
     let state = AppState::try_new(db_path).await?;
     let app = load_router(state).await?;
-    let addr: &str = "127.0.0.1:3000";
+    let addr: &str = "0.0.0.0:3000";
     let listener = TcpListener::bind(addr).await?;
 
     info!("Listening on {}", addr);
