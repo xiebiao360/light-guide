@@ -4,16 +4,11 @@ pub mod handlers;
 use std::{ops::Deref, sync::Arc};
 
 use anyhow::{Context, anyhow};
-use axum::{
-    Router,
-    extract::Path,
-    http::header,
-    response::{IntoResponse, Redirect},
-    routing::get,
-};
+use axum::{Router, extract::Path, http::header, response::IntoResponse, routing::get};
 use error::AppError;
 use handlers::health_handler;
 use sqlx::SqlitePool;
+use tower_http::compression::CompressionLayer;
 use tracing::info;
 
 #[derive(Debug, Clone)]
@@ -66,18 +61,28 @@ impl Deref for AppState {
 struct Asset;
 
 pub async fn load_router(state: AppState) -> Result<axum::Router, AppError> {
-    let router = Router::new()
-        .route(
-            "/",
-            get(|| async { Redirect::permanent("/static/index.html") }),
-        )
-        .route("/static/{*path}", get(serve_static_files))
-        .route("/api/v1/health", get(health_handler))
+    let api = Router::new()
+        .route("/v1/health", get(health_handler))
         .with_state(state);
+
+    let router = Router::new()
+        .nest("/api", api)
+        .route("/", get(handle_index))
+        .route("/{*path}", get(handle_static))
+        .layer(CompressionLayer::new());
     Ok(router)
 }
 
-async fn serve_static_files(Path(path): Path<String>) -> impl IntoResponse {
+async fn handle_index() -> impl IntoResponse {
+    info!("Serving index.html");
+    serve_file("index.html".to_string()).await
+}
+
+async fn handle_static(Path(path): Path<String>) -> impl IntoResponse {
+    serve_file(path).await
+}
+
+async fn serve_file(path: String) -> impl IntoResponse {
     info!("Serving static file: {}", path);
 
     if let Some(file) = Asset::get(&path) {
