@@ -3,69 +3,147 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <RouterView />
+  <div id="app">
+    <RouterView />
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+html,
+body {
+  height: 100%;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+#app {
+  height: 100vh;
+  overflow: hidden;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
 }
 
-nav a:first-of-type {
-  border: 0;
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+/* 响应式设计 */
+/* 大屏幕优化 */
+@media (min-width: 1600px) {
+  .features-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .charts-section {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .stats-section {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+@media (min-width: 2000px) {
+  .features-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    max-width: 1800px !important;
+    margin: 0 auto !important;
+  }
+  
+  .stats-section {
+    max-width: 1800px !important;
+    margin: 0 auto !important;
+  }
+  
+  .metrics-grid {
+    max-width: 1800px !important;
+    margin: 0 auto 3rem auto !important;
+  }
+  
+  .charts-section {
+    max-width: 1800px !important;
+    margin: 0 auto !important;
+  }
+}
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px !important;
   }
 
-  .logo {
-    margin: 0 2rem 0 0;
+  .sidebar-header h2 {
+    font-size: 1.2rem !important;
   }
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
+  .nav-text {
+    font-size: 0.85rem !important;
   }
 
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
+  .main-content {
+    padding: 15px !important;
+  }
 
-    padding: 1rem 0;
-    margin-top: 1rem;
+  .features-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .charts-section {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 180px !important;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .tab-item {
+    min-width: 100px !important;
+    padding: 6px 12px !important;
+  }
+
+  .toolbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .search-box {
+    max-width: none !important;
   }
 }
 </style>
