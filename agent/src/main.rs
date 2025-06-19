@@ -1,5 +1,6 @@
 use clap::{Arg, Command};
 use tracing::info;
+use std::sync::Arc;
 
 mod websocket;
 mod system;
@@ -7,6 +8,9 @@ mod apps;
 mod logs;
 mod packages;
 mod config;
+
+use websocket::{WebSocketServer, AgentMessage};
+use system::SystemMonitor;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -17,14 +21,6 @@ async fn main() -> anyhow::Result<()> {
         .version("0.1.0")
         .about("Light Guide Agent - 多环境运维代理")
         .arg(
-            Arg::new("server")
-                .short('s')
-                .long("server")
-                .value_name("URL")
-                .help("客户端服务器地址")
-                .required(true),
-        )
-        .arg(
             Arg::new("port")
                 .short('p')
                 .long("port")
@@ -34,14 +30,30 @@ async fn main() -> anyhow::Result<()> {
         )
         .get_matches();
 
-    let server_url = matches.get_one::<String>("server").unwrap();
     let port = matches.get_one::<String>("port").unwrap();
+    let addr = format!("0.0.0.0:{}", port);
 
     info!("启动 Light Guide Agent");
-    info!("服务器地址: {}", server_url);
-    info!("监听端口: {}", port);
+    info!("监听地址: {}", addr);
 
-    // TODO: 启动 WebSocket 连接和各个模块
+    // 创建WebSocket服务器
+    let ws_server = Arc::new(WebSocketServer::new(addr.clone()));
+    let message_sender = ws_server.get_message_sender();
+    
+    // 创建系统监控器
+    let mut system_monitor = SystemMonitor::new();
+    
+    // 启动系统监控任务
+    let monitor_sender = message_sender.clone();
+    tokio::spawn(async move {
+        system_monitor.start_monitoring(5, move |metrics| {
+            let _ = monitor_sender.send(AgentMessage::SystemMetrics(metrics));
+        }).await;
+    });
+
+    // 启动WebSocket服务器
+    info!("启动WebSocket服务器...");
+    ws_server.start().await?;
     
     Ok(())
 }
