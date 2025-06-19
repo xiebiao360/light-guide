@@ -1,5 +1,5 @@
 use clap::{Arg, Command};
-use tracing::{info, error};
+use tracing::info;
 
 mod websocket;
 mod system;
@@ -11,7 +11,7 @@ mod config;
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // 初始化日志
-    tracing_subscriber::init();
+    tracing_subscriber::fmt::init();
 
     let matches = Command::new("light-guide-agent")
         .version("0.1.0")
