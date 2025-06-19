@@ -1,22 +1,21 @@
 {
   "name": "light-guide",
-  "private": true,
   "version": "0.1.0",
-  "type": "module",
+  "description": "多环境运维管理工具",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "tauri": "tauri"
+    "dev": "cd client && pnpm dev",
+    "build": "cd client && pnpm build",
+    "build:client": "cd client && pnpm build",
+    "build:agent": "cd agent && cargo build --release",
+    "build:all": "npm run build:client && npm run build:agent",
+    "dev:client": "cd client && pnpm dev",
+    "agent:dev": "cd agent && cargo run",
+    "agent:build": "cd agent && cargo build --release",
+    "install:client": "cd client && pnpm install",
+    "clean": "cd client && rm -rf dist target && cd ../agent && cargo clean"
   },
-  "dependencies": {
-    "vue": "^3.5.13",
-    "@tauri-apps/api": "^2",
-    "@tauri-apps/plugin-opener": "^2"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.1",
-    "vite": "^6.0.3",
-    "@tauri-apps/cli": "^2"
-  }
+  "workspaces": [
+    "client"
+  ],
+  "private": true
 }
